@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+*.bin
+
+# Data files
+*.npz
+*.npy
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Datasets (too large)
+downstream/dataset/*/raw/
+downstream/dataset/*/processed/
+downstream/datasets/*/raw/
+downstream/datasets/*/processed/
+!downstream/dataset/*/processed/.gitkeep
+!downstream/datasets/*/processed/.gitkeep
+
+# Experiments (results only, not full checkpoints)
+experiments/*/
+!experiments/README.md
+
+# Pretrained models (provide download links instead)
+pretrain/pretrained_models/
+!pretrain/pretrained_models/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+tensorboard/
+
+# Temporary
+tmp/
+temp/
+*.tmp

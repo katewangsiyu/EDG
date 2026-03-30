@@ -1,0 +1,11 @@
+molecule,best_Energy,best_Force
+aspirin,0.123906,0.379294
+azobenzene,0.07125,0.217083
+benzene,0.003406,0.020124
+ethanol,0.03575,0.18698
+malonaldehyde,0.066109,0.315986
+naphthalene,0.022563,0.095407
+paracetamol,0.096281,0.318458
+salicylic,0.065625,0.294518
+toluene,0.022203,0.103407
+uracil,0.048406,0.225439
