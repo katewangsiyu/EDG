@@ -1,0 +1,26 @@
+我之前补跑了一组 rMD17 实验（SphereNet, EDG naive distillation, λ=0.001, 无 reliability evaluator），目的是与现有的 EDG++ (κ=0, λ=0.001, 有 evaluator) 做对比，隔离 reliability estimator 的独立贡献。
+
+请查看 memory 文件 edg_naive_lambda0001_experiment.md 了解实验详情。
+
+结果目录：GEOM3D/experiments/run_rMD17_EDG_naive_lambda0.001/SphereNet/e1000_b128_lr5e-4_ed128_lsCosine/ED/ED0.001/rs42/{分子名}/logs.log
+
+请：
+1. 从每个分子的 logs.log 最后一行提取 test Energy MAE 和 test Force MAE
+2. 与现有 EDG++ (κ=0) 数据对比（在 GEOM3D/结果与分析/rmd17_all_results.csv 中，筛选 alpha_std_all=0, alpha_std_batch=0, beta_batch=0 的行）
+3. 根据对比结果，更新 EDG_IEEE_Trans_extracted/sections_edgpp/experiment.tex 中 rMD17 相关的表格和 "Progressive improvement" 段落
+
+---
+
+补跑实验对应论文哪部分：
+
+这个实验直接影响 experiment.tex 的 Section "Main Results on rMD17"，具体是：
+
+- Table 3-4（rMD17 energy/force 表格）：需要在 SphereNet block 中插入一行 "EDG (λ=0.001)" 作为控制组，或替换现有 EDG 行使 λ 一致
+
+- "Progressive improvement from EDG to EDG++" 段落（L122-126）：目前这段说 "Step 1→2 improves 6/10 molecules"，但 step 1（EDG λ=0.01）和 step 2（EDG++ κ=0, λ=0.001）同时改了 λ 和 evaluator。补跑数据可以把这段改写为两步独立分解：
+  - Step 1: λ 从 0.01 降到 0.001 的效果（EDG λ=0.01 → EDG λ=0.001）
+  - Step 2: 加入 evaluator 的效果（EDG λ=0.001 → EDG++ κ=0, λ=0.001）
+
+- "Malonaldehyde boundary case" 段落（L125）：可能需要根据新数据重新分析
+
+确保你完全了解了我的论文初稿，和补跑实验结果，再回答
