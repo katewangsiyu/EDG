@@ -1,0 +1,66 @@
+# Dataset folders (regenerable, too large for git)
+**/dataset/
+**/datasets/
+**/raw/
+**/processed/
+**/npz_data/
+**/teacher_feats/
+
+# Data file types
+*.pt
+*.pth
+*.npz
+*.npy
+*.h5
+*.hdf5
+*.ckpt
+*.bin
+*.sdf
+*.lmdb
+*.mat
+*.csv.gz
+*.tar.gz
+*.zip
+
+# Large CSVs (explicit include small ones if needed)
+*.csv
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Env
+.env
+.venv/
+venv/
+
+# IDE / OS
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+
+# Logs / tmp
+*.log
+*.tmp
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.toc
+*.bbl
+*.blg
+*.lof
+*.lot
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
