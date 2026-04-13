@@ -1,0 +1,15 @@
+\subsection{Tail Error and Robustness Analysis}
+\label{sec:error_distribution}
+
+% [Polish] Original: To provide empirical support for the heavy-tailed error structure motivating Proposition...
+To test the heavy-tailed error structure assumed in Proposition~\ref{prop:gradient_noise}, we analyze how threshold tuning affects prediction errors across difficulty regimes. We compare two EDG++ configurations---tuned $\kappa$ versus default $\kappa{=}0$---on four representative tasks spanning different architectures and property types.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.95\textwidth]{imgs_edgpp/experiments/tail_error_ecdf.pdf}
+\caption{Cumulative mean absolute error curves on QM9 for four representative tasks. The x-axis (log scale) shows the top $K$\% of samples ranked by difficulty (default-threshold error magnitude), from the hardest 0.5\% to 25\%. The EDG++ tuned-$\kappa$ curve (orange) lies consistently below the EDG++ default-threshold ($\kappa\!=\!0$) curve (blue). Annotated percentages show the relative error reduction at the 1\% and 5\% marks. \textit{Note}: both curves use the reliability estimator; the comparison isolates the effect of threshold tuning. Difficulty ranking is defined by the default-threshold model's errors; y-axis scales differ across panels to maximize readability within each task.}
+\label{fig:tail_error}
+\end{figure*}
+
+% [Polish] Original: Figure reveals that threshold tuning substantially improves tail performance...consistent with Proposition.
+Figure~\ref{fig:tail_error} shows that threshold tuning substantially reduces tail errors: at the top 1\%, reductions range from 27.0\% (SphereNet-$H$) to 37.9\% (Equiformer-$U_0$), providing indirect evidence for the heavy-tailed error structure assumed in Proposition~\ref{prop:gradient_noise} (see Section~\ref{sec:Theoretical_Analysis} for the causal link between downstream prediction errors and teacher reconstruction errors). The tuned curve remains below the default curve across the full visible range (top 0.5\%--25\%), indicating that the benefit extends broadly across the harder half of the test set. Standard deviation reductions of 5.3--17.3\% and maximum error reductions up to 39.1\% (Equiformer-$U_0$) confirm improved robustness. Difficulty-stratified analysis (Appendix~\ref{sec:appendix_difficulty_stratification}) reveals a capacity reallocation effect: threshold tuning shifts learning capacity from easy samples (where the baseline already performs well) to hard samples (where stricter filtering provides the most corrective signal), consistent with Proposition~\ref{prop:gradient_noise}.

@@ -1,0 +1,106 @@
+\section{Complete Hyperparameter Search Results}
+
+\subsection{QM9 Dataset: Robustness Analysis}
+
+Table~\ref{tab:supp_qm9_stats} presents the mean and standard deviation of test MAE across all 45 hyperparameter configurations for each model-task combination. The coefficient of variation (CV) quantifies the sensitivity to hyperparameter choices, with lower values indicating greater robustness.
+
+\begin{table*}[!htb]
+  \scriptsize
+  \centering
+  \caption{Statistical analysis of QM9 results across all 45 hyperparameter configurations. Mean±Std represents the average and standard deviation of test MAE. CV (coefficient of variation) = (Std/Mean)×100\%. Lower CV indicates greater robustness to hyperparameter selection.}
+  \label{tab:supp_qm9_stats}
+    \begin{tabular}{llcccc}
+    \toprule
+    \textbf{Model} & \textbf{Task} & \textbf{Mean±Std} & \textbf{Min} & \textbf{Max} & \textbf{CV (\%)} \\
+    \midrule
+    \multirow{12}{*}{SchNet}
+    & $\alpha$ & 0.06973±0.00079 & 0.06810 & 0.07141 & 1.14 \\
+    & $C_v$ & 0.03187±0.00021 & 0.03147 & 0.03224 & 0.66 \\
+    & $G$ & 0.01416±0.00018 & 0.01373 & 0.01450 & 1.30 \\
+    & $\Delta\varepsilon$ & 0.05026±0.00037 & 0.04943 & 0.05108 & 0.74 \\
+    & $H$ & 0.01416±0.00017 & 0.01377 & 0.01453 & 1.22 \\
+    & $\varepsilon_{\text{HOMO}}$ & 0.03202±0.00024 & 0.03139 & 0.03254 & 0.75 \\
+    & $\varepsilon_{\text{LUMO}}$ & 0.02610±0.00023 & 0.02550 & 0.02647 & 0.88 \\
+    & $\mu$ & 0.03058±0.00031 & 0.02984 & 0.03115 & 1.02 \\
+    & $R^2$ & 0.13478±0.00287 & 0.12591 & 0.13990 & 2.13 \\
+    & $U$ & 0.01395±0.00020 & 0.01361 & 0.01412 & 1.43 \\
+    & $U_0$ & 0.01386±0.00022 & 0.01342 & 0.01450 & 1.55 \\
+    & ZPVE & 0.00171±0.00002 & 0.00167 & 0.00173 & 1.17 \\
+    \midrule
+    \multirow{12}{*}{SphereNet}
+    & $\alpha$ & 0.04632±0.00063 & 0.04567 & 0.04831 & 1.36 \\
+    & $C_v$ & 0.02415±0.00018 & 0.02400 & 0.02463 & 0.75 \\
+    & $G$ & 0.00783±0.00024 & 0.00766 & 0.00863 & 3.06 \\
+    & $\Delta\varepsilon$ & 0.03982±0.00024 & 0.03947 & 0.04052 & 0.60 \\
+    & $H$ & 0.00668±0.00025 & 0.00636 & 0.00742 & 3.74 \\
+    & $\varepsilon_{\text{HOMO}}$ & 0.02193±0.00012 & 0.02177 & 0.02231 & 0.56 \\
+    & $\varepsilon_{\text{LUMO}}$ & 0.01890±0.00015 & 0.01875 & 0.01937 & 0.77 \\
+    & $\mu$ & 0.02665±0.00009 & 0.02648 & 0.02685 & 0.34 \\
+    & $R^2$ & 0.25595±0.00488 & 0.25341 & 0.27725 & 1.91 \\
+    & $U$ & 0.00653±0.00020 & 0.00641 & 0.00720 & 3.06 \\
+    & $U_0$ & 0.00665±0.00024 & 0.00642 & 0.00742 & 3.58 \\
+    & ZPVE & 0.00121±0.00002 & 0.00120 & 0.00127 & 1.65 \\
+    \midrule
+    \multirow{12}{*}{Equiformer}
+    & $\alpha$ & 0.06434±0.00161 & 0.06175 & 0.07101 & 2.50 \\
+    & $C_v$ & 0.02660±0.00031 & 0.02637 & 0.02768 & 1.16 \\
+    & $G$ & 0.01349±0.00043 & 0.01206 & 0.01424 & 3.17 \\
+    & $\Delta\varepsilon$ & 0.04554±0.00044 & 0.04509 & 0.04653 & 0.96 \\
+    & $H$ & 0.01532±0.00063 & 0.01471 & 0.01745 & 4.11 \\
+    & $\varepsilon_{\text{HOMO}}$ & 0.02563±0.00025 & 0.02527 & 0.02651 & 0.96 \\
+    & $\varepsilon_{\text{LUMO}}$ & 0.02268±0.00023 & 0.02228 & 0.02314 & 1.00 \\
+    & $\mu$ & 0.02063±0.00042 & 0.01985 & 0.02174 & 2.04 \\
+    & $R^2$ & 0.42656±0.02088 & 0.40354 & 0.47618 & 4.89 \\
+    & $U$ & 0.01543±0.00069 & 0.01480 & 0.01746 & 4.47 \\
+    & $U_0$ & 0.01869±0.00182 & 0.01692 & 0.02821 & 9.72 \\
+    & ZPVE & 0.00158±0.00002 & 0.00159 & 0.00162 & 1.27 \\
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+\textbf{Key observations:}
+\begin{itemize}
+    \item SchNet exhibits the highest robustness with mean CV = 1.14\%, indicating stable performance across diverse hyperparameter settings.
+    \item Equiformer shows the highest sensitivity, particularly for thermodynamic properties ($U_0$ CV = 9.72\%, $R^2$ CV = 4.89\%), suggesting that careful hyperparameter tuning is critical for this architecture.
+    \item Thermodynamic properties ($G$, $H$, $U$, $U_0$) consistently show higher CV values across all models compared to electronic properties, indicating greater sensitivity to the distillation configuration.
+\end{itemize}
+
+\subsection{rMD17 Dataset: Molecule-Specific Sensitivity}
+
+Table~\ref{tab:supp_rmd17_stats} presents the statistical analysis of rMD17 results across all 7 hyperparameter configurations (varying $\kappa_{all}$ from -1.5 to 1.5) for SphereNet. The results reveal significant molecule-dependent sensitivity to the reliability-aware filtering threshold.
+
+\begin{table*}[!htb]
+  \scriptsize
+  \centering
+  \caption{Statistical analysis of rMD17 results across all 7 hyperparameter configurations for SphereNet. Energy and Force values represent mean±std of test MAE. CV quantifies the sensitivity to the global threshold parameter $\kappa_{all}$.}
+  \label{tab:supp_rmd17_stats}
+    \begin{tabular}{lcccccccccc}
+    \toprule
+    \multirow{2}{*}{\textbf{Molecule}} & \multicolumn{5}{c}{\textbf{Energy (kcal/mol)}} & \multicolumn{5}{c}{\textbf{Force (kcal/mol·\r{A})}} \\
+    \cmidrule(lr){2-6} \cmidrule(lr){7-11}
+    & \textbf{Mean±Std} & \textbf{Min} & \textbf{Max} & \textbf{CV (\%)} & \textbf{Rank} & \textbf{Mean±Std} & \textbf{Min} & \textbf{Max} & \textbf{CV (\%)} & \textbf{Rank} \\
+    \midrule
+    Aspirin & 0.145±0.031 & 0.124 & 0.210 & 21.09 & 3 & 0.381±0.002 & 0.379 & 0.384 & 0.55 & 6 \\
+    Azobenzene & 0.085±0.011 & 0.071 & 0.102 & 12.51 & 6 & 0.219±0.002 & 0.217 & 0.222 & 0.80 & 4 \\
+    Benzene & 0.004±0.000 & 0.003 & 0.004 & 6.36 & 10 & 0.020±0.000 & 0.020 & 0.021 & 1.09 & 2 \\
+    Ethanol & 0.039±0.004 & 0.036 & 0.046 & 11.12 & 8 & 0.189±0.001 & 0.187 & 0.191 & 0.77 & 5 \\
+    Malonaldehyde & 0.123±0.059 & 0.066 & 0.217 & 48.14 & 1 & 0.319±0.002 & 0.316 & 0.321 & 0.58 & 7 \\
+    Naphthalene & 0.032±0.011 & 0.023 & 0.050 & 32.93 & 2 & 0.096±0.001 & 0.095 & 0.097 & 0.67 & 8 \\
+    Paracetamol & 0.110±0.014 & 0.096 & 0.130 & 12.82 & 5 & 0.320±0.002 & 0.318 & 0.323 & 0.50 & 10 \\
+    Salicylic & 0.111±0.042 & 0.066 & 0.195 & 38.16 & 4 & 0.299±0.003 & 0.295 & 0.306 & 1.11 & 1 \\
+    Toluene & 0.025±0.003 & 0.022 & 0.030 & 11.23 & 7 & 0.104±0.001 & 0.103 & 0.106 & 0.79 & 3 \\
+    Uracil & 0.060±0.014 & 0.048 & 0.090 & 23.19 & 9 & 0.232±0.004 & 0.225 & 0.236 & 1.58 & 9 \\
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+\textbf{Key observations:}
+\begin{itemize}
+    \item \textbf{Energy-Force decoupling:} Energy predictions show much higher sensitivity to hyperparameters (CV range: 6.36\%-48.14\%) compared to force predictions (CV range: 0.50\%-1.58\%). This suggests that the ED-aware teacher primarily provides global energy-level information rather than local force-level gradients.
+    \item \textbf{Malonaldehyde anomaly:} Malonaldehyde exhibits the highest energy sensitivity (CV = 48.14\%), consistent with its rapid intramolecular proton transfer dynamics that challenge static-conformation-based ED predictions.
+    \item \textbf{Symmetry effect:} Benzene, with its high molecular symmetry, shows the lowest energy sensitivity (CV = 6.36\%), indicating that ED predictions for symmetric molecules are more reliable and less dependent on the filtering threshold.
+    \item \textbf{Rank discordance:} The sensitivity rankings for energy and force are uncorrelated (e.g., malonaldehyde ranks 1st for energy CV but 7th for force CV), further supporting the energy-force decoupling hypothesis.
+\end{itemize}
+
+
+

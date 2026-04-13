@@ -1,0 +1,10 @@
+LaTeX Caption建议：
+
+\caption{Visualization of energy prediction errors on rMD17. The $y$-axis represents $|y_{\mathrm{pred}} - y_{\mathrm{true}}|$ on the test set. EDG and EDG++ reduce errors across nearly all conformations, demonstrating that the improvement from selective distillation is consistent across the entire test set rather than limited to specific samples.}
+\label{fig:rMD17_vis}
+
+说明：
+- 左图：SphereNet on Naphthalene (EDG vs EDG++)
+- 右图：SphereNet on Uracil (EDG vs EDG++)
+- 红色线：EDG (naive distillation, α_all=0)
+- 蓝色线：EDG++ (selective distillation, α_all=1.5)
