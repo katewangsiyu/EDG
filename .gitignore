@@ -64,3 +64,6 @@ Thumbs.db
 *.idx
 *.ilg
 *.ind
+
+# 太大而网络瓶颈推不动的单个文件
+EDG_IEEE_Trans_extracted/imgs_edgpp/our_method/EDG++主图（重画）.png
