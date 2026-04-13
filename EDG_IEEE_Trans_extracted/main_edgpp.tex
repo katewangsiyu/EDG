@@ -1,0 +1,94 @@
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\usepackage{array}
+\usepackage{url}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{textcomp}
+\usepackage{multirow}
+\usepackage{overpic}
+\usepackage{amsfonts}
+\usepackage{xcolor,colortbl}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{enumitem}
+\usepackage{placeins}
+
+\definecolor{Gray}{gray}{.90}
+
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\newcommand{\etal}{\textit{et al}.}
+\newcommand{\ie}{\textit{i}.\textit{e}.}
+\newcommand{\eg}{\textit{e}.\textit{g}.}
+\newcommand{\etc}{\textit{etc}.}
+
+% subfigure label format handled by subfig package
+
+\ifCLASSINFOpdf
+\else
+\fi
+
+\usepackage[bookmarks,colorlinks,linkcolor=black, anchorcolor=black, citecolor=black, urlcolor=black]{hyperref}
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+
+\title{EDG++: Reliability-Aware Electron Density-Enhanced Molecular Geometry Learning}
+
+\author{Hongxin Xiang, Xin Jin, Jun Xia, Wenjie Du, Haowen Chen, Stan Z. Li,~\IEEEmembership{IEEE Fellow} and Xiangxiang Zeng,~\IEEEmembership{IEEE Senior Member}
+\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem H. Xiang is with the College of Computer Science and Electronic Engineering, Hunan University, Changsha, China.
+\IEEEcompsocthanksitem X. Jin is with the Eastern Institute of Technology, Ningbo, China.
+\IEEEcompsocthanksitem J. Xia is with the School of Engineering, Westlake University, Hangzhou, China.
+\IEEEcompsocthanksitem W. Du is with the University of Science and Technology of China, Hefei, China.
+\IEEEcompsocthanksitem H. Chen is with the College of Computer Science and Electronic Engineering, Hunan University, Changsha, China.
+\IEEEcompsocthanksitem S. Li is with the School of Engineering, Westlake University, Hangzhou, China.
+\IEEEcompsocthanksitem X. Zeng is with the College of Computer Science and Electronic Engineering, Hunan University, Changsha, China. (Corresponding author. E-mail: xzeng@hnu.edu.cn)
+}
+}
+
+\markboth{IEEE Transactions on Pattern Analysis and Machine Intelligence}%
+{Xiang \MakeLowercase{\textit{et al.}}: EDG++: Reliability-Aware Electron Density-Enhanced Molecular Geometry Learning}
+
+\IEEEtitleabstractindextext{
+\input{sections_edgpp/abstract}
+}
+
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext
+\IEEEpeerreviewmaketitle
+
+\input{sections_edgpp/introduction}
+\input{sections_edgpp/related_work}
+\input{sections_edgpp/method}
+\input{sections_edgpp/experiment}
+\input{sections_edgpp/conclusion}
+
+\section*{Acknowledgments}
+This work was supported by the National Natural Science Foundation of China (grant nos. U22A2037, 62425204, 62122025, 62450002, 62432011), Grants of Ningbo 2023CX050011.
+
+\bibliographystyle{IEEEtran}
+\bibliography{edgpp_journal}
+
+\newpage
+\onecolumn
+\appendices
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\setcounter{table}{0}
+\renewcommand{\thetable}{S\arabic{table}}
+\input{sections_edgpp/appendix}
+
+\vfill
+
+\end{document}

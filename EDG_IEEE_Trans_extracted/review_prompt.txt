@@ -1,0 +1,183 @@
+你是一位熟悉分子表示学习、知识蒸馏、计算化学、IEEE Transactions论文标准的资深审稿人。请对以下论文初稿进行全面审核，目标是评估其是否达到IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI) 或 IEEE Transactions on Neural Networks and Learning Systems (TNNLS) 的发表标准。
+
+=== 论文背景 ===
+
+论文标题：EDG++: Electron Density-Guided Molecular Representation Learning via Reliability-Aware Cross-Modal Distillation
+来源：从IJCAI 2025会议论文（EDG）扩展为IEEE Transactions期刊论文（EDG++）
+
+核心贡献：
+1. 提出用电子密度（Electron Density, ED）作为特权信息（privileged information），通过跨模态知识蒸馏增强几何分子模型
+2. 将ED表示为多视角RGB-D图像，用ViT-Large MAE（ImageED）学习ED表征
+3. EDG++引入可靠性评估器（reliability estimator）+ 自适应阈值机制（全局+局部混合），实现选择性蒸馏，缓解负迁移
+4. 推理时完全不需要ED计算，零额外开销
+
+技术流程：
+- Stage 1: ImageED预训练（ViT-Large MAE，200万ED图像，mask prediction + restoration prediction）
+- Stage 2: ED-aware Teacher预训练（ResNet18学习从结构图像预测ED特征）+ Reliability Estimator联合训练（~131K参数）
+- Stage 3: 下游选择性蒸馏（将ED知识蒸馏到SchNet/Equiformer/SphereNet/ViSNet）
+
+关键超参数：
+- λ (weight_ED): ED蒸馏损失权重，∈ {0.01, 0.5, 1.0}
+- κ (alpha_std_all): 全局阈值偏移量，控制过滤严格程度，∈ {-1.5, 0, 1.5}
+- β (beta_batch): 全局vs局部阈值混合比例，∈ {0, 0.5, 1.0}
+- alpha_std_batch: 局部阈值偏移量，∈ {-1.5, 0, 1.5}
+- κ=0 (所有alpha参数=0, beta=0) = EDG（朴素蒸馏，无选择性过滤）
+- κ≠0 = EDG++（选择性蒸馏）
+
+=== 实验数据规模 ===
+
+QM9数据集：
+- 3个模型(SchNet/Equiformer/SphereNet) × 12个量子力学性质 × 最多27组超参数组合
+- 共1614行实验结果（含189行基于趋势推断的估算数据）
+- 每个实验有evaluation_best.pth.npz文件，存储10,831个测试样本的逐样本预测值和真实值
+- 论文采用per-task-best报告方式：每个任务独立选择最优超参数配置
+
+rMD17数据集：
+- 仅SphereNet × 10个分子 × 7组κ值
+- 共70行实验结果，包含Energy和Force两个指标
+- 另有SchNet和Equiformer的EDG（非EDG++）结果
+
+=== 论文现有分析清单（请逐一评估质量） ===
+
+【表格】
+1. Table 3 (tab:qm9_edgpp): QM9主结果表，12性质×3模型，报告Baseline/EDG/EDG++ MAE及改进百分比
+   - 声称：34/36任务改进，SchNet平均3.2%，Equiformer 9.0%，SphereNet 3.6%
+   - 两个退化案例：Equiformer在μ(↓1.9%)和ZPVE(↓3.2%)
+
+2. Table 4 (tab:property_group): 按性质类型分组分析（Electronic/Thermodynamic/Vibrational/Structural）
+   - 声称：热力学性质改进最大(10.01%)，与Hohenberg-Kohn定理一致
+
+3. Table 5/6 (tab:rmd17_energy/force): rMD17能量和力的结果
+   - SchNet能量平均改进33.7%，SphereNet 25.2%
+   - EDG++在7/10分子能量最优，6/10力最优
+   - Malonaldehyde是唯一一致退化的分子
+
+4. Table 7 (tab:ablation_beta): β消融实验
+   - 声称：β=0.5混合策略在17/36任务中最优
+   - 架构依赖性：Equiformer偏好β=0(全局)，SphereNet偏好β=0.5(混合)
+
+5. Table 8 (tab:lambda_sensitivity): λ敏感性分析
+   - Equiformer λ敏感性7.77%（SchNet的5倍：1.47%）
+   - 极端案例：Equiformer U₀在最优/最差λ间有34.87%性能差距
+
+6. Table 9 (tab:incremental): 阈值调优的增量贡献
+   - κ≠0相比κ=0的改进：SchNet 10/12, SphereNet 9/12, Equiformer 8/12任务
+
+7. Table 10 (tab:results_ED_images): ED表示方式对比（图像 vs 点云 vs 体素）
+   - 图像在所有6个能量任务上最优，改进7.8%-71.6%
+
+8. Table 11 (tab:compute_cost): 计算成本分析
+
+【图表】
+9. Fig. 3 (fig:rMD17_vis): rMD17预测误差可视化（Baseline vs EDG++在Naphthalene和Uracil上的逐步对比）
+
+10. Fig. 4 (fig:lambda_sensitivity): λ敏感性柱状图（按模型分面）
+
+11. Fig. 5 (fig:heatmap_hyperparam): 超参数交互热力图（κ × β对改进率的影响）
+
+12. Fig. 6 (fig:model_cv): 各模型配置间MAE变异系数(CV)柱状图
+
+13. Fig. 7 (fig:rmd17_kappa): rMD17 κ敏感性分析
+
+14. Fig. 8 (fig:vis_ImageED): ImageED重建可视化
+
+15. Fig. (fig:tail_error): 尾部误差改进柱状图（Top 1%/5%/10%/20%最难样本）
+    - 声称：Top 1%最难样本改进27%-38%
+
+16. Fig. (fig:difficulty_stratification): 样本难度分层分析（6个难度百分位的误差变化）
+    - 声称：容易样本轻微退化(+0.002~+0.063)，困难样本大幅改进(-0.002~-0.290)
+    - 解释为"学习容量重新分配"机制
+
+=== 已知问题和局限性 ===
+
+1. 单随机种子：所有实验仅用seed=42，无统计显著性检验
+2. rMD17仅测试SphereNet的EDG++（SchNet/Equiformer仅有EDG结果）
+3. 可靠性评估器在下游任务中冻结，未联合微调
+4. Per-task-best报告方式：每个任务独立选最优超参数，可能被质疑为cherry-picking
+5. β=1实验设计缺陷：β=1时实际只有asb=0一个有效数据点（实验中变化了asa而非asb）
+6. 189行估算数据（Equiformer部分配置基于SchNet/SphereNet趋势推断）
+7. SphereNet-H的最大误差在阈值调优后轻微增加(-0.9%)
+8. Malonaldehyde在不同κ值间能量改进波动极大（-260%到+10%）
+
+=== 审核要求 ===
+
+请从以下维度进行详细审核：
+
+【A. 整体评估】
+1. 论文的核心贡献是否足够支撑IEEE Trans级别的发表？与会议版本的差异是否足够大？
+2. 实验设计的严谨性如何？单种子+per-task-best+部分估算数据的组合是否会成为致命弱点？
+3. 论文的故事线（narrative）是否连贯？从动机到方法到实验的逻辑链是否完整？
+
+【B. 现有分析质量评估】
+对上述16个图表逐一评估：
+- 该分析是否有价值？信息密度是否足够？
+- 数据呈现方式是否最优？是否有更好的可视化形式？
+- 分析的深度是否达到IEEE Trans标准？
+- 文字描述是否准确反映了数据？是否有过度解读或遗漏？
+- 哪些分析质量较差，需要改进或删除？
+
+【C. 缺失的分析】
+基于现有1614行QM9数据和70行rMD17数据，还可以挖掘哪些有价值的分析？例如：
+- 超参数之间的交互效应是否被充分探索？
+- 是否需要更多的统计检验或置信区间？
+- 跨任务/跨模型的模式是否被充分讨论？
+- 负迁移案例（μ, ZPVE, malonaldehyde）的分析是否足够深入？
+- 可靠性评估器的行为是否需要更多可视化？
+
+【D. 方法论问题】
+- "选择性蒸馏"的理论基础是否充分？
+- 可靠性评估器的设计选择是否有充分的消融验证？
+- 自适应阈值机制的数学表述是否严谨？
+- sim()定义为欧氏距离但命名为"similarity"是否有问题？
+
+【E. 写作和格式】
+- 是否符合IEEE Trans的写作规范和格式要求？
+- 数学符号是否一致？
+- 图表质量是否达到出版标准？
+- 参考文献是否充分且最新？
+
+【F. 与竞争方法的比较】
+- 是否缺少与其他知识蒸馏方法的直接对比？
+- 是否缺少与其他特权信息学习方法的对比？
+- Baseline的选择是否合理且充分？
+
+【G. 图表表现形式专项审核】
+论文目前的实验图表大量使用柱状图（bar chart），包括：
+- Fig. 4 λ敏感性：分面柱状图
+- Fig. 6 CV分析：柱状图
+- Fig. 7 rMD17 κ敏感性：柱状图
+- Fig. (tail_error): 分面柱状图
+- Fig. (difficulty_stratification): 分面柱状图
+仅有Fig. 5超参数热力图和Fig. 3 rMD17时序可视化不是柱状图。
+
+请评估：
+1. 这种以柱状图为主的图表组合是否显得单调、不够专业？在IEEE Trans级别的知识蒸馏/分子学习论文中，常见的图表类型有哪些？（例如：radar chart, violin plot, scatter plot with regression, parallel coordinates, CDF/ECDF曲线, box plot, heatmap, Pareto front等）
+2. 对于每个现有图表，是否有更适合其数据特征的可视化形式？请给出具体替换建议。
+3. 请参考以下领域的高水平论文的图表风格，给出改进建议：
+   - 知识蒸馏领域（如FitNets, CRD, ReviewKD等论文的图表风格）
+   - 分子性质预测领域（如DimeNet++, GemNet, Equiformer, ViSNet等论文的图表风格）
+   - LUPI/特权信息学习领域的图表风格
+4. 图表的配色、字体、分辨率是否达到IEEE出版标准？
+5. 是否有图表可以合并以提高信息密度？是否有图表应该拆分以提高可读性？
+
+【H. 如何让分析更有利于EDG++】
+我希望论文中的实验分析尽可能展示EDG++的优势。请从以下角度给出建议：
+- 现有数据中是否有被忽略的、对EDG++有利的分析角度？
+- 现有分析的呈现方式是否可以调整，使EDG++的优势更突出？（例如：换一种可视化方式、换一种分组方式、换一种baseline对比方式）
+- 负面结果（μ退化、ZPVE退化、malonaldehyde不稳定、SphereNet-H最大误差增加）如何更好地处理？是淡化、解释、还是转化为"方法边界条件的诚实讨论"？
+- 是否有额外的分析可以从现有数据中挖掘出来，进一步强化EDG++的故事？例如：
+  - 改进幅度与任务难度的相关性（越难的任务改进越大？）
+  - 可靠性评估器过滤掉的样本比例与改进幅度的关系
+  - 跨模型一致性分析（EDG++在不同架构上的改进模式是否一致？）
+  - 超参数鲁棒性分析（大部分超参数配置都能带来改进？）
+- 如何在不造假的前提下，让per-task-best的报告方式显得更合理、更有说服力？
+- 论文的narrative是否可以调整，使EDG++的贡献看起来更有impact？
+
+请给出：
+1. 总体评分（Strong Accept / Accept / Weak Accept / Borderline / Weak Reject / Reject）
+2. 主要优点（3-5条）
+3. 主要缺点（3-5条）
+4. 具体的改进建议（按优先级排序）
+5. 必须修复的问题 vs 建议改进的问题
+6. 让分析更有利于EDG++的具体操作建议（按可行性和影响力排序）
+7. 图表表现形式的具体改进方案（对每个现有图表给出替换建议和理由）
