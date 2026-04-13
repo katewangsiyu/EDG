@@ -1,0 +1,368 @@
+{
+  "SchNet": {
+    "alpha": {
+      "lambda_0.01": 0.069879,
+      "lambda_0.5": 0.070719,
+      "lambda_1.0": 0.070279,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 1.19,
+      "best_mae": 0.069879,
+      "worst_mae": 0.070719
+    },
+    "cv": {
+      "lambda_0.01": 0.032088,
+      "lambda_0.5": 0.031738,
+      "lambda_1.0": 0.03189,
+      "best_lambda": 0.5,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 1.09,
+      "best_mae": 0.031738,
+      "worst_mae": 0.032088
+    },
+    "g298": {
+      "lambda_0.01": 0.014176,
+      "lambda_0.5": 0.013875,
+      "lambda_1.0": 0.014212,
+      "best_lambda": 0.5,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 2.37,
+      "best_mae": 0.013875,
+      "worst_mae": 0.014212
+    },
+    "gap": {
+      "lambda_0.01": 0.050278,
+      "lambda_0.5": 0.050419,
+      "lambda_1.0": 0.05006,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 0.71,
+      "best_mae": 0.05006,
+      "worst_mae": 0.050419
+    },
+    "h298": {
+      "lambda_0.01": 0.014038,
+      "lambda_0.5": 0.013992,
+      "lambda_1.0": 0.013994,
+      "best_lambda": 0.5,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 0.33,
+      "best_mae": 0.013992,
+      "worst_mae": 0.014038
+    },
+    "homo": {
+      "lambda_0.01": 0.032011,
+      "lambda_0.5": 0.031569,
+      "lambda_1.0": 0.032144,
+      "best_lambda": 0.5,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 1.79,
+      "best_mae": 0.031569,
+      "worst_mae": 0.032144
+    },
+    "lumo": {
+      "lambda_0.01": 0.026286,
+      "lambda_0.5": 0.026203,
+      "lambda_1.0": 0.02592,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 1.39,
+      "best_mae": 0.02592,
+      "worst_mae": 0.026286
+    },
+    "mu": {
+      "lambda_0.01": 0.030314,
+      "lambda_0.5": 0.030441,
+      "lambda_1.0": 0.030075,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 1.2,
+      "best_mae": 0.030075,
+      "worst_mae": 0.030441
+    },
+    "r2": {
+      "lambda_0.01": 0.137534,
+      "lambda_0.5": 0.136593,
+      "lambda_1.0": 0.134489,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 2.21,
+      "best_mae": 0.134489,
+      "worst_mae": 0.137534
+    },
+    "u0": {
+      "lambda_0.01": 0.013877,
+      "lambda_0.5": 0.013659,
+      "lambda_1.0": 0.013608,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 1.94,
+      "best_mae": 0.013608,
+      "worst_mae": 0.013877
+    },
+    "u298": {
+      "lambda_0.01": 0.014066,
+      "lambda_0.5": 0.014234,
+      "lambda_1.0": 0.014246,
+      "best_lambda": 0.01,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 1.26,
+      "best_mae": 0.014066,
+      "worst_mae": 0.014246
+    },
+    "zpve": {
+      "lambda_0.01": 0.001678,
+      "lambda_0.5": 0.001716,
+      "lambda_1.0": 0.001709,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 2.21,
+      "best_mae": 0.001678,
+      "worst_mae": 0.001716
+    }
+  },
+  "Equiformer": {
+    "alpha": {
+      "lambda_0.01": 0.06718,
+      "lambda_0.5": 0.067872,
+      "lambda_1.0": 0.067049,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 1.21,
+      "best_mae": 0.067049,
+      "worst_mae": 0.067872
+    },
+    "cv": {
+      "lambda_0.01": 0.026813,
+      "lambda_0.5": 0.027094,
+      "lambda_1.0": 0.02673,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 1.34,
+      "best_mae": 0.02673,
+      "worst_mae": 0.027094
+    },
+    "g298": {
+      "lambda_0.01": 0.014241,
+      "lambda_0.5": 0.012411,
+      "lambda_1.0": 0.013574,
+      "best_lambda": 0.5,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 12.85,
+      "best_mae": 0.012411,
+      "worst_mae": 0.014241
+    },
+    "gap": {
+      "lambda_0.01": 0.045816,
+      "lambda_0.5": 0.04518,
+      "lambda_1.0": 0.045896,
+      "best_lambda": 0.5,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 1.56,
+      "best_mae": 0.04518,
+      "worst_mae": 0.045896
+    },
+    "h298": {
+      "lambda_0.01": 0.016872,
+      "lambda_0.5": 0.017876,
+      "lambda_1.0": 0.017131,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 5.62,
+      "best_mae": 0.016872,
+      "worst_mae": 0.017876
+    },
+    "homo": {
+      "lambda_0.01": 0.025739,
+      "lambda_0.5": 0.025536,
+      "lambda_1.0": 0.02599,
+      "best_lambda": 0.5,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 1.75,
+      "best_mae": 0.025536,
+      "worst_mae": 0.02599
+    },
+    "lumo": {
+      "lambda_0.01": 0.022478,
+      "lambda_0.5": 0.022848,
+      "lambda_1.0": 0.022487,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 1.62,
+      "best_mae": 0.022478,
+      "worst_mae": 0.022848
+    },
+    "mu": {
+      "lambda_0.01": 0.021424,
+      "lambda_0.5": 0.02211,
+      "lambda_1.0": 0.021496,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 3.1,
+      "best_mae": 0.021424,
+      "worst_mae": 0.02211
+    },
+    "r2": {
+      "lambda_0.01": 0.450564,
+      "lambda_0.5": 0.403536,
+      "lambda_1.0": 0.476181,
+      "best_lambda": 0.5,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 15.26,
+      "best_mae": 0.403536,
+      "worst_mae": 0.476181
+    },
+    "u0": {
+      "lambda_0.01": 0.028208,
+      "lambda_0.5": 0.018371,
+      "lambda_1.0": 0.019223,
+      "best_lambda": 0.5,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 34.87,
+      "best_mae": 0.018371,
+      "worst_mae": 0.028208
+    },
+    "u298": {
+      "lambda_0.01": 0.014802,
+      "lambda_0.5": 0.016643,
+      "lambda_1.0": 0.015392,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 11.06,
+      "best_mae": 0.014802,
+      "worst_mae": 0.016643
+    },
+    "zpve": {
+      "lambda_0.01": 0.001586,
+      "lambda_0.5": 0.001635,
+      "lambda_1.0": 0.001602,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 3.0,
+      "best_mae": 0.001586,
+      "worst_mae": 0.001635
+    }
+  },
+  "SphereNet": {
+    "alpha": {
+      "lambda_0.01": 0.046045,
+      "lambda_0.5": 0.046588,
+      "lambda_1.0": 0.047723,
+      "best_lambda": 0.01,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 3.52,
+      "best_mae": 0.046045,
+      "worst_mae": 0.047723
+    },
+    "cv": {
+      "lambda_0.01": 0.024233,
+      "lambda_0.5": 0.024127,
+      "lambda_1.0": 0.024593,
+      "best_lambda": 0.5,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 1.89,
+      "best_mae": 0.024127,
+      "worst_mae": 0.024593
+    },
+    "g298": {
+      "lambda_0.01": 0.007974,
+      "lambda_0.5": 0.00824,
+      "lambda_1.0": 0.008358,
+      "best_lambda": 0.01,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 4.59,
+      "best_mae": 0.007974,
+      "worst_mae": 0.008358
+    },
+    "gap": {
+      "lambda_0.01": 0.040224,
+      "lambda_0.5": 0.039524,
+      "lambda_1.0": 0.039638,
+      "best_lambda": 0.5,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 1.74,
+      "best_mae": 0.039524,
+      "worst_mae": 0.040224
+    },
+    "h298": {
+      "lambda_0.01": 0.006534,
+      "lambda_0.5": 0.006757,
+      "lambda_1.0": 0.007017,
+      "best_lambda": 0.01,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 6.88,
+      "best_mae": 0.006534,
+      "worst_mae": 0.007017
+    },
+    "homo": {
+      "lambda_0.01": 0.022098,
+      "lambda_0.5": 0.021955,
+      "lambda_1.0": 0.021894,
+      "best_lambda": 1.0,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 0.92,
+      "best_mae": 0.021894,
+      "worst_mae": 0.022098
+    },
+    "lumo": {
+      "lambda_0.01": 0.01875,
+      "lambda_0.5": 0.019202,
+      "lambda_1.0": 0.019081,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 2.35,
+      "best_mae": 0.01875,
+      "worst_mae": 0.019202
+    },
+    "mu": {
+      "lambda_0.01": 0.026814,
+      "lambda_0.5": 0.026827,
+      "lambda_1.0": 0.027345,
+      "best_lambda": 0.01,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 1.94,
+      "best_mae": 0.026814,
+      "worst_mae": 0.027345
+    },
+    "r2": {
+      "lambda_0.01": 0.261066,
+      "lambda_0.5": 0.262086,
+      "lambda_1.0": 0.277246,
+      "best_lambda": 0.01,
+      "worst_lambda": 1.0,
+      "sensitivity_pct": 5.84,
+      "best_mae": 0.261066,
+      "worst_mae": 0.277246
+    },
+    "u0": {
+      "lambda_0.01": 0.007184,
+      "lambda_0.5": 0.006657,
+      "lambda_1.0": 0.00687,
+      "best_lambda": 0.5,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 7.34,
+      "best_mae": 0.006657,
+      "worst_mae": 0.007184
+    },
+    "u298": {
+      "lambda_0.01": 0.006503,
+      "lambda_0.5": 0.006799,
+      "lambda_1.0": 0.006727,
+      "best_lambda": 0.01,
+      "worst_lambda": 0.5,
+      "sensitivity_pct": 4.35,
+      "best_mae": 0.006503,
+      "worst_mae": 0.006799
+    },
+    "zpve": {
+      "lambda_0.01": 0.001248,
+      "lambda_0.5": 0.001236,
+      "lambda_1.0": 0.001238,
+      "best_lambda": 0.5,
+      "worst_lambda": 0.01,
+      "sensitivity_pct": 0.96,
+      "best_mae": 0.001236,
+      "worst_mae": 0.001248
+    }
+  }
+}
