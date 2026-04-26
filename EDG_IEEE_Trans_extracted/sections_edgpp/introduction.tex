@@ -1,13 +1,10 @@
 \section{Introduction}
 \label{sec:Introduction}
 
-% [Polish] Original: Machine learning force fields (MLFF) have emerged as powerful tools for modeling molecular interactions~\cite{...}, offering a computationally efficient route to predict energies and forces with near-quantum accuracy. By learning interatomic potentials from data, MLFFs enable large-scale molecular dynamics simulations that were previously infeasible with ab initio methods. A major reason for their success is the use of geometric deep learning architectures that respect fundamental physical symmetries...
 Machine learning force fields (MLFF) can predict molecular energies and forces with near-quantum accuracy at a fraction of the cost of ab initio methods~\cite{behler2007generalized,unke2021machine,chmiela2017machine,xiang2024molecular,wang2024efficiently}. Their success stems largely from geometric deep learning architectures that respect E(3) symmetries~\cite{thomas2018tensor,fuchs2020se3}, representing atoms as nodes in geometric graphs~\cite{liu2022spherical,wang2024enhancing}. However, existing methods operate at the atomic level---modeling coordinates, multi-body interactions, \etc~\cite{batzner20223,liao2023equiformer,wang2024enhancing}---without explicitly incorporating information at the electronic level.
 
-% [Polish] Original: Electron density (ED) is a core quantum mechanical property describing the distribution of electrons within a molecule and is crucial for accurately predicting quantum chemical properties...underscoring ED's central role in molecular physics.
 Electron density (ED) describes how electrons are distributed within a molecule and is central to predicting quantum chemical properties~\cite{sunshine2023chemical,skogh2024electron}. \emph{ED is not merely another view of geometry, but the physical manifestation of chemical bonding, polarization, conjugation, and lone-pair effects; many quantum properties are direct functions of the electronic structure.} Nuclear positions dictate the ED, which in turn determines observables such as total energy, forces, and electrostatic potentials. In density functional theory (DFT)~\cite{kohn1965self}, the Hohenberg-Kohn theorem~\cite{hohenberg1964inhomogeneous} formalizes this: the ground-state energy is a unique functional of the electron density.
 
-% [Polish] Original: From an information-theoretic perspective, ED can be viewed as an approximate latent mediator...enabling them to exhibit electron-level inductive bias while preserving their symmetry guarantees at inference.
 From an information-theoretic perspective, ED acts as an \emph{approximate latent mediator}: geometry $\rightarrow$ electron density $\rightarrow$ property. The Hohenberg-Kohn theorem supports this view by establishing ground-state energy as a unique functional of the electron density under fixed composition and charge. Standard geometry GNNs implicitly learn this mediating relationship from data, but may lack sufficient inductive bias. Our approach explicitly provides the mediator's structure through DFT-computed ED during training, then distills this knowledge back to geometry models. A further challenge is the symmetry gap between modalities: geometry GNNs enforce E(3) equivariance, whereas ED images from 2D projections of 3D density fields rely on multi-view rendering to approximate rotational invariance. Our distillation framework addresses this: \emph{we transfer electronic structure knowledge from a non-equivariant visual teacher to equivariant geometry students, so that they acquire electron-level inductive bias while retaining symmetry guarantees at inference}.
 
 \begin{figure*}[htbp]
@@ -30,7 +27,7 @@ We summarize the main contributions as follows:
     \item We propose EDG, an electron density distillation framework that injects electronic structure inductive bias into geometry-based models without adding inference cost, using electron density as privileged information available only during training.
     \item We design an efficient multi-view RGB-D image representation for electron density and develop ImageED, a masked autoencoder that learns ED-related features, along with an ED-aware teacher that transfers this knowledge without requiring ED at inference.
     \item We extend EDG to EDG++ by introducing a pre-trained reliability estimator and an adaptive thresholding mechanism combining global and local statistics, enabling selective distillation to mitigate negative transfer. We provide a theoretical analysis establishing a sufficient condition under which selective distillation reduces an upper bound on gradient noise, supported by empirical observation of heavy-tailed error structures.
-    \item We demonstrate improvements on the majority of tasks across multiple architectures on QM9 (SchNet, Equiformer, SphereNet) and rMD17 (SphereNet with EDG++; SchNet, ViSNet with EDG), achieving gains on 34/36 QM9 task-model combinations and 17/20 rMD17 energy/force predictions, while characterizing the boundary conditions of the approach.
+    \item We validate EDG++ across multiple architectures: SchNet, Equiformer, and SphereNet on QM9; and SchNet, SphereNet, and ViSNet on rMD17. The method achieves gains on 34/36 QM9 task-model combinations and 55/60 rMD17 energy and force predictions, and we further characterize the boundary conditions of the approach.
 \end{itemize}
 
 \textbf{Difference with Conference Version.} Table~\ref{tab:conf_vs_journal} summarizes the key differences between the IJCAI 2025 conference paper~\cite{xiang2025edg} (EDG) and this journal extension (EDG++).
@@ -49,7 +46,7 @@ We summarize the main contributions as follows:
     Thresholding & -- & Adaptive global-local \\
     Theory & -- & Prop.~1 (gradient noise) \\
     QM9 models & SchNet, SphereNet & + Equiformer \\
-    rMD17 models & SchNet, ViSNet & + SphereNet (EDG++) \\
+    rMD17 models & SchNet, ViSNet & + SphereNet (all EDG++) \\
     Ablations & $\lambda$ only & $\beta$, $\kappa$, tail error, CV \\
     Analysis & Per-property & + property-type, architecture \\
     \bottomrule

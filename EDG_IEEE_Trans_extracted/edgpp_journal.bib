@@ -1,12 +1,3 @@
-% =============================================================================
-% EDG++ Journal Paper Bibliography
-% Reliability-Aware Electron Density-Enhanced Molecular Geometry Learning
-% =============================================================================
-
-% =============================================================================
-% SECTION 0: Conference Version Citation (REQUIRED for journal extension)
-% =============================================================================
-
 @inproceedings{xiang2025edg,
   title={Electron Density-enhanced Molecular Geometry Learning},
   author={Xiang, Hongxin and Xia, Jun and Jin, Xin and Du, Wenjie and Zeng, Li and Zeng, Xiangxiang},
@@ -14,23 +5,6 @@
   year={2025},
   organization={IJCAI}
 }
-% Conference version - this journal paper extends this work
-% This bibliography is organized into the following sections:
-% 1. Density Functional Theory and Quantum Chemistry Foundations
-% 2. Machine Learning Force Fields and Molecular Property Prediction
-% 3. Equivariant Graph Neural Networks and 3D Molecular Representations
-% 4. Electron Density Representation and Learning
-% 5. Knowledge Distillation and Learning with Privileged Information
-% 6. Reliability-Aware and Selective Learning Methods
-% 7. Vision Transformers and Masked Autoencoders
-% 8. Datasets and Benchmarks
-% 9. Deep Learning Foundations and Architectures
-% =============================================================================
-
-% =============================================================================
-% SECTION 1: Density Functional Theory and Quantum Chemistry Foundations
-% =============================================================================
-% Relevance: EDG++ is fundamentally based on DFT-computed electron density
 
 @article{hohenberg1964inhomogeneous,
   title={Inhomogeneous electron gas},
@@ -42,7 +16,6 @@
   year={1964},
   publisher={APS}
 }
-% Core foundation: Hohenberg-Kohn theorem establishes ED as fundamental quantity
 
 @article{kohn1965self,
   title={Self-consistent equations including exchange and correlation effects},
@@ -54,45 +27,6 @@
   year={1965},
   publisher={APS}
 }
-% Core foundation: Kohn-Sham DFT equations
-
-% kohn1996density removed: redundant with kohn1965self and not cited in journal version
-
-@article{burke2012perspective,
-  title={Perspective on density functional theory},
-  author={Burke, Kieron},
-  journal={The Journal of Chemical Physics},
-  volume={136},
-  number={15},
-  pages={150901},
-  year={2012},
-  publisher={AIP Publishing}
-}
-% DFT perspective and modern developments
-
-@article{jones2015density,
-  title={Density functional theory: Its origins, rise to prominence, and future},
-  author={Jones, R O},
-  journal={Reviews of Modern Physics},
-  volume={87},
-  number={3},
-  pages={897--923},
-  year={2015},
-  publisher={APS}
-}
-% Comprehensive DFT review for journal-level depth
-
-@article{jain2016computational,
-  title={Computational predictions of energy materials using density functional theory},
-  author={Jain, Anubhav and Shin, Yongwoo and Persson, Kristin A},
-  journal={Nature Reviews Materials},
-  volume={1},
-  number={1},
-  pages={15004},
-  year={2016},
-  publisher={Nature Publishing Group}
-}
-% DFT applications in materials science
 
 @article{turney2012psi4,
   title={Psi4: an open-source ab initio electronic structure program},
@@ -104,12 +38,6 @@
   year={2012},
   publisher={Wiley Online Library}
 }
-% Software used for ED generation in EDG++
-
-% =============================================================================
-% SECTION 2: Machine Learning Force Fields and Molecular Property Prediction
-% =============================================================================
-% Relevance: EDG++ enhances geometry-based models for molecular property prediction
 
 @article{behler2007generalized,
   title={Generalized neural-network representation of high-dimensional potential-energy surfaces},
@@ -121,31 +49,6 @@
   year={2007},
   publisher={APS}
 }
-% Foundational work on neural network potentials
-
-@article{bartok2010gaussian,
-  title={Gaussian approximation potentials: The accuracy of quantum mechanics, without the electrons},
-  author={Bart{\'o}k, Albert P and Payne, Mike C and Kondor, Risi and Cs{\'a}nyi, G{\'a}bor},
-  journal={Physical Review Letters},
-  volume={104},
-  number={13},
-  pages={136403},
-  year={2010},
-  publisher={APS}
-}
-% Gaussian Approximation Potentials - important MLFF baseline
-
-@article{rupp2012fast,
-  title={Fast and accurate modeling of molecular atomization energies with machine learning},
-  author={Rupp, Matthias and Tkatchenko, Alexandre and M{\"u}ller, Klaus-Robert and Von Lilienfeld, O Anatole},
-  journal={Physical Review Letters},
-  volume={108},
-  number={5},
-  pages={058301},
-  year={2012},
-  publisher={APS}
-}
-% Coulomb matrix descriptor for molecular ML
 
 @article{chmiela2017machine,
   title={Machine learning of accurate energy-conserving molecular force fields},
@@ -157,7 +60,6 @@
   year={2017},
   publisher={American Association for the Advancement of Science}
 }
-% Energy-conserving force fields
 
 @article{unke2021machine,
   title={Machine learning force fields},
@@ -169,93 +71,14 @@
   year={2021},
   publisher={ACS Publications}
 }
-% Comprehensive MLFF review - essential for journal paper
 
-@article{unke2019physnet,
-  title={PhysNet: A neural network for predicting energies, forces, dipole moments, and partial charges},
-  author={Unke, Oliver T and Meuwly, Markus},
-  journal={Journal of Chemical Theory and Computation},
-  volume={15},
-  number={6},
-  pages={3678--3693},
-  year={2019},
-  publisher={ACS Publications}
-}
-% PhysNet architecture
-
-@article{smith2017ani,
-  title={ANI-1: an extensible neural network potential with DFT accuracy at force field computational cost},
-  author={Smith, Justin S and Isayev, Olexandr and Roitberg, Adrian E},
-  journal={Chemical Science},
-  volume={8},
-  number={4},
-  pages={3192--3203},
-  year={2017},
-  publisher={Royal Society of Chemistry}
-}
-% ANI neural network potential
-
-@article{musaelian2023learning,
-  title={Learning local equivariant representations for large-scale atomistic dynamics},
-  author={Musaelian, Albert and Batzner, Simon and Jober, Anders and Sun, Lixin and Geiger, Mario and Mailoa, Jonathan P and Kornbluth, Mordechai and Molinari, Nicola and Smidt, Tess E and Kozinsky, Boris},
-  journal={Nature Communications},
-  volume={14},
-  number={1},
-  pages={579},
-  year={2023},
-  publisher={Nature Publishing Group UK London}
-}
-% Allegro - recent scalable equivariant model
-
-@article{ko2021fourth,
-  title={A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer},
-  author={Ko, Tsz Wai and Finkler, Jonas A and Goedecker, Stefan and Behler, J{\"o}rg},
-  journal={Nature Communications},
-  volume={12},
-  number={1},
-  pages={398},
-  year={2021},
-  publisher={Nature Publishing Group UK London}
-}
-% Fourth-generation neural network potentials
-
-@article{dral2020quantum,
-  title={Quantum chemistry in the age of machine learning},
-  author={Dral, Pavlo O},
-  journal={The Journal of Physical Chemistry Letters},
-  volume={11},
-  number={6},
-  pages={2336--2347},
-  year={2020},
-  publisher={ACS Publications}
-}
-% ML in quantum chemistry perspective
-
-% =============================================================================
-% SECTION 3: Equivariant Graph Neural Networks and 3D Molecular Representations
-% =============================================================================
-% Relevance: EDG++ distills knowledge to equivariant geometry students
-
-@article{schutt2017schnet,
+@inproceedings{schutt2017schnet,
   title={SchNet: A continuous-filter convolutional neural network for modeling quantum interactions},
   author={Sch{\"u}tt, Kristof and Kindermans, Pieter-Jan and Sauceda Felix, Huziel Enoc and Chmiela, Stefan and Tkatchenko, Alexandre and M{\"u}ller, Klaus-Robert},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={30},
   year={2017}
 }
-% SchNet - baseline model in EDG++
-
-@article{schutt2018schnet,
-  title={SchNet--A deep learning architecture for molecules and materials},
-  author={Sch{\"u}tt, Kristof T and Sauceda, Huziel E and Kindermans, P-J and Tkatchenko, Alexandre and M{\"u}ller, K-R},
-  journal={The Journal of Chemical Physics},
-  volume={148},
-  number={24},
-  pages={241722},
-  year={2018},
-  publisher={AIP Publishing}
-}
-% SchNet journal version
 
 @inproceedings{satorras2021n,
   title={E(n) equivariant graph neural networks},
@@ -265,17 +88,15 @@
   year={2021},
   organization={PMLR}
 }
-% EGNN - foundational E(n) equivariant work
 
-@article{fuchs2020se3,
+@inproceedings{fuchs2020se3,
   title={SE(3)-Transformers: 3D roto-translation equivariant attention networks},
   author={Fuchs, Fabian and Worrall, Daniel and Fischer, Volker and Welling, Max},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={33},
   pages={1970--1981},
   year={2020}
 }
-% SE(3)-Transformers - foundational equivariant work
 
 @article{thomas2018tensor,
   title={Tensor field networks: Rotation-and translation-equivariant neural networks for 3D point clouds},
@@ -283,15 +104,13 @@
   journal={arXiv preprint arXiv:1802.08219},
   year={2018}
 }
-% Tensor Field Networks - foundational equivariant work
 
-@article{liu2022spherical,
+@inproceedings{liu2022spherical,
   title={Spherical message passing for 3D molecular graphs},
   author={Liu, Yi and Wang, Limei and Liu, Meng and Lin, Yuchao and Zhang, Xuan and Oztekin, Bora and Ji, Shuiwang},
-  journal={International Conference on Learning Representations},
+  booktitle={International Conference on Learning Representations},
   year={2022}
 }
-% SphereNet - baseline model in EDG++
 
 @inproceedings{liao2023equiformer,
   title={Equiformer: Equivariant graph attention transformer for 3D atomistic graphs},
@@ -299,7 +118,6 @@
   booktitle={The Eleventh International Conference on Learning Representations},
   year={2023}
 }
-% Equiformer - baseline model in EDG++
 
 @article{batzner20223,
   title={E(3)-equivariant graph neural networks for data-efficient and accurate interatomic potentials},
@@ -311,7 +129,6 @@
   year={2022},
   publisher={Nature Publishing Group UK London}
 }
-% NequIP - important E(3) equivariant model
 
 @article{wang2024enhancing,
   title={Enhancing geometric representations for molecules with equivariant vector-scalar interactive message passing},
@@ -323,56 +140,38 @@
   year={2024},
   publisher={Nature Publishing Group UK London}
 }
-% ViSNet - baseline model in EDG++
 
-@article{wang2024efficiently,
+@inproceedings{wang2024efficiently,
   title={Efficiently incorporating quintuple interactions into geometric deep learning force fields},
   author={Wang, Zun and Liu, Guoqing and Zhou, Yichi and Wang, Tong and Shao, Bin},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={36},
   year={2023}
 }
-% QuinNet - multi-body interactions
 
-@article{gasteiger2020directional,
+@inproceedings{gasteiger2020directional,
   title={Directional message passing for molecular graphs},
   author={Gasteiger, Johannes and Gro{\ss}, Janek and G{\"u}nnemann, Stephan},
-  journal={International Conference on Learning Representations},
+  booktitle={International Conference on Learning Representations},
   year={2020}
 }
-% DimeNet - directional message passing
 
-@article{gasteiger2021gemnet,
+@inproceedings{gasteiger2021gemnet,
   title={GemNet: Universal directional graph neural networks for molecules},
   author={Gasteiger, Johannes and Becker, Florian and G{\"u}nnemann, Stephan},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={34},
   pages={6790--6802},
   year={2021}
 }
-% GemNet - geometric message passing
 
-@article{liu2024symmetry,
+@inproceedings{liu2024symmetry,
   title={Symmetry-informed geometric representation for molecules, proteins, and crystalline materials},
   author={Liu, Shengchao and Li, Yanjing and Li, Zhuoxinran and Zheng, Zhiling and Duan, Chenru and Ma, Zhi-Ming and Yaghi, Omar and Anandkumar, Animashree and Borgs, Christian and Chayes, Jennifer and others},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={36},
   year={2023}
 }
-% Geom3D - symmetry-informed representations
-
-@article{bronstein2021geometric,
-  title={Geometric deep learning: Grids, groups, graphs, geodesics, and gauges},
-  author={Bronstein, Michael M and Bruna, Joan and Cohen, Taco and Veli{\v{c}}kovi{\'c}, Petar},
-  journal={arXiv preprint arXiv:2104.13478},
-  year={2021}
-}
-% Geometric deep learning survey - essential reference
-
-% =============================================================================
-% SECTION 4: Electron Density Representation and Learning
-% =============================================================================
-% Relevance: Core contribution of EDG++ - ED representation and learning
 
 @article{sunshine2023chemical,
   title={Chemical properties from graph neural network-predicted electron densities},
@@ -384,7 +183,6 @@
   year={2023},
   publisher={ACS Publications}
 }
-% GNN-predicted electron densities for properties
 
 @article{skogh2024electron,
   title={The electron density: a fidelity witness for quantum computation},
@@ -396,7 +194,6 @@
   year={2024},
   publisher={Royal Society of Chemistry}
 }
-% ED as quantum fidelity witness
 
 @article{kim2024deep,
   title={Deep learning for symmetry classification using sparse 3D electron density data for inorganic compounds},
@@ -408,7 +205,6 @@
   year={2024},
   publisher={Nature Publishing Group UK London}
 }
-% Deep learning on ED for symmetry classification
 
 @article{lee2024convolutional,
   title={Convolutional network learning of self-consistent electron density via grid-projected atomic fingerprints},
@@ -420,7 +216,6 @@
   year={2024},
   publisher={Nature Publishing Group UK London}
 }
-% CNN for self-consistent ED learning
 
 @article{parrilla2024electron,
   title={Electron density-based GPT for optimization and suggestion of host--guest binders},
@@ -432,7 +227,6 @@
   year={2024},
   publisher={Nature Publishing Group US New York}
 }
-% ED-based GPT for molecular design
 
 @article{gong2023incorporation,
   title={Incorporation of density scaling constraint in density functional design via contrastive representation learning},
@@ -444,7 +238,6 @@
   year={2023},
   publisher={Royal Society of Chemistry}
 }
-% Contrastive learning for density functional design
 
 @article{singh2024classification,
   title={Classification of substances by health hazard using deep neural networks and molecular electron densities},
@@ -456,7 +249,6 @@
   year={2024},
   publisher={Springer}
 }
-% ED for health hazard classification
 
 @article{hegde2017machine,
   title={Machine-learned approximations to density functional theory Hamiltonians},
@@ -468,7 +260,6 @@
   year={2017},
   publisher={Nature Publishing Group UK London}
 }
-% ML approximations to DFT Hamiltonians
 
 @article{brockherde2017bypassing,
   title={Bypassing the Kohn-Sham equations with machine learning},
@@ -480,7 +271,6 @@
   year={2017},
   publisher={Nature Publishing Group UK London}
 }
-% Bypassing KS equations with ML - seminal work
 
 @article{nagai2020completing,
   title={Completing density functional theory by machine learning hidden messages from molecules},
@@ -492,12 +282,6 @@
   year={2020},
   publisher={Nature Publishing Group UK London}
 }
-% ML completing DFT
-
-% =============================================================================
-% SECTION 5: Knowledge Distillation and Learning with Privileged Information
-% =============================================================================
-% Relevance: EDG++ uses privileged information paradigm for cross-modal distillation
 
 @article{hinton2015distilling,
   title={Distilling the knowledge in a neural network},
@@ -505,7 +289,6 @@
   journal={arXiv preprint arXiv:1503.02531},
   year={2015}
 }
-% Foundational knowledge distillation paper
 
 @article{gou2021knowledge,
   title={Knowledge distillation: A survey},
@@ -517,7 +300,6 @@
   year={2021},
   publisher={Springer}
 }
-% Comprehensive KD survey - essential for journal paper
 
 @article{vapnik2009new,
   title={A new learning paradigm: Learning using privileged information},
@@ -529,31 +311,27 @@
   year={2009},
   publisher={Elsevier}
 }
-% LUPI paradigm - core theoretical foundation for EDG++
 
-@article{lopez2016unifying,
+@inproceedings{lopez2016unifying,
   title={Unifying distillation and privileged information},
   author={Lopez-Paz, David and Bottou, L{\'e}on and Sch{\"o}lkopf, Bernhard and Vapnik, Vladimir},
-  journal={International Conference on Learning Representations},
+  booktitle={International Conference on Learning Representations},
   year={2016}
 }
-% Unifying KD and LUPI - directly relevant
 
-@article{romero2015fitnets,
+@inproceedings{romero2015fitnets,
   title={FitNets: Hints for thin deep nets},
   author={Romero, Adriana and Ballas, Nicolas and Kahou, Samira Ebrahimi and Chassang, Antoine and Gatta, Carlo and Bengio, Yoshua},
-  journal={International Conference on Learning Representations},
+  booktitle={International Conference on Learning Representations},
   year={2015}
 }
-% Feature-based distillation
 
-@article{zagoruyko2017paying,
+@inproceedings{zagoruyko2017paying,
   title={Paying more attention to attention: Improving the performance of convolutional neural networks via attention transfer},
   author={Zagoruyko, Sergey and Komodakis, Nikos},
-  journal={International Conference on Learning Representations},
+  booktitle={International Conference on Learning Representations},
   year={2017}
 }
-% Attention transfer in KD
 
 @article{pan2010survey,
   title={A survey on transfer learning},
@@ -565,7 +343,6 @@
   year={2010},
   publisher={IEEE}
 }
-% Transfer learning survey - negative transfer discussion
 
 @article{wang2021knowledge,
   title={Knowledge distillation and student-teacher learning for visual intelligence: A review and new outlooks},
@@ -577,12 +354,6 @@
   year={2021},
   publisher={IEEE}
 }
-% KD review in TPAMI - journal-level reference
-
-% =============================================================================
-% SECTION 6: Reliability-Aware and Selective Learning Methods
-% =============================================================================
-% Relevance: EDG++ introduces reliability-aware selective distillation
 
 @inproceedings{park2024selkd,
   title={SelKD: Selective Knowledge Distillation via Optimal Transport},
@@ -591,7 +362,6 @@
   year={2024},
   organization={Springer}
 }
-% Selective KD - most relevant to EDG++'s selective distillation idea
 
 @inproceedings{lin2023teaching,
   title={Teaching with Soft Label Smoothing for Mitigating Noisy Labels in Facial Expressions},
@@ -601,7 +371,6 @@
   year={2023},
   organization={Springer}
 }
-% Uncertainty-driven teaching - supports "teacher reliability is not constant"
 
 @article{das2023understanding,
   title={Understanding the Role of the Teacher in Knowledge Distillation},
@@ -612,7 +381,6 @@
   year={2023},
   publisher={IEEE}
 }
-% Understanding teacher role in KD - connects to reliability estimation
 
 @inproceedings{guo2023selective,
   title={Selective Knowledge Distillation for Non-Autoregressive Translation},
@@ -621,7 +389,6 @@
   pages={11264--11277},
   year={2023}
 }
-% Selective KD in NLP - broader evidence for selective distillation paradigm
 
 @inproceedings{guo2017calibration,
   title={On calibration of modern neural networks},
@@ -631,7 +398,6 @@
   year={2017},
   organization={PMLR}
 }
-% Neural network calibration - confidence estimation
 
 @inproceedings{bengio2009curriculum,
   title={Curriculum learning},
@@ -640,34 +406,30 @@
   pages={41--48},
   year={2009}
 }
-% Curriculum learning - related to sample selection
 
-@article{kumar2010self,
+@inproceedings{kumar2010self,
   title={Self-paced learning for latent variable models},
   author={Kumar, M Pawan and Packer, Benjamin and Koller, Daphne},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={23},
   year={2010}
 }
-% Self-paced learning
 
-@article{jiang2018mentornet,
+@inproceedings{jiang2018mentornet,
   title={MentorNet: Learning data-driven curriculum for very deep neural networks on corrupted labels},
   author={Jiang, Lu and Zhou, Zhengyuan and Leung, Thomas and Li, Li-Jia and Fei-Fei, Li},
-  journal={International Conference on Machine Learning},
+  booktitle={International Conference on Machine Learning},
   pages={2304--2313},
   year={2018}
 }
-% MentorNet - data-driven curriculum
 
-@article{han2018co,
+@inproceedings{han2018co,
   title={Co-teaching: Robust training of deep neural networks with extremely noisy labels},
   author={Han, Bo and Yao, Quanming and Yu, Xingrui and Niu, Gang and Xu, Miao and Hu, Weihua and Tsang, Ivor and Sugiyama, Masashi},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={31},
   year={2018}
 }
-% Co-teaching for noisy labels
 
 @article{song2022learning,
   title={Learning from noisy labels with deep neural networks: A survey},
@@ -679,30 +441,14 @@
   year={2022},
   publisher={IEEE}
 }
-% Noisy label learning survey - journal reference
 
-@article{zhang2021understanding,
-  title={Understanding deep learning (still) requires rethinking generalization},
-  author={Zhang, Chiyuan and Bengio, Samy and Hardt, Moritz and Recht, Benjamin and Vinyals, Oriol},
-  journal={Communications of the ACM},
-  volume={64},
-  number={3},
-  pages={107--115},
-  year={2021},
-  publisher={ACM New York, NY, USA}
-}
-% Understanding generalization
-
-% Recent selective/uncertainty-aware KD (reviewer-requested additions)
 @inproceedings{shi2025selkd,
   title={{SelKD}: Selective Knowledge Distillation via Optimal Transport Perspective},
   author={Shi, Liangliang and Shi, Zhengyan and Yan, Junchi},
   booktitle={International Conference on Learning Representations},
   year={2025}
 }
-% Selective KD via optimal transport - ICLR 2025
 
-% Cross-modal KD (reviewer-requested addition)
 @inproceedings{huo2024c2kd,
   title={{C$^2$KD}: Bridging the Modality Gap for Cross-Modal Knowledge Distillation},
   author={Huo, Fushuo and Xu, Wenchao and Guo, Jingcai and Wang, Haozhao and Guo, Song},
@@ -710,16 +456,13 @@
   pages={16006--16015},
   year={2024}
 }
-% Cross-modal KD addressing modality gap - CVPR 2024
 
-% Electron-aware molecular representation learning (reviewer-requested additions)
 @inproceedings{lee2025selfsupervised,
   title={Self-Supervised Diffusion Processes for Electron-Aware Molecular Representation Learning},
   author={Lee, Namkyeong and Oh, Yunhak and Noh, Heewoong and Na, Gyoung S. and Fu, Tianfan and Park, Chanyoung},
   booktitle={International Conference on Learning Representations},
   year={2025}
 }
-% Electron-aware molecular learning via diffusion - ICLR 2025
 
 @inproceedings{gao2025equivariant,
   title={Learning Equivariant Non-Local Electron Density Functionals},
@@ -727,12 +470,6 @@
   booktitle={International Conference on Learning Representations},
   year={2025}
 }
-% Equivariant electron density functional learning - ICLR 2025 Spotlight
-
-% =============================================================================
-% SECTION 7: Vision Transformers and Masked Autoencoders
-% =============================================================================
-% Relevance: ImageED uses MAE architecture for ED representation learning
 
 @inproceedings{dosovitskiy2020image,
   title={An image is worth 16x16 words: Transformers for image recognition at scale},
@@ -740,7 +477,6 @@
   booktitle={International Conference on Learning Representations},
   year={2021}
 }
-% Vision Transformer - backbone for ImageED
 
 @inproceedings{he2022masked,
   title={Masked autoencoders are scalable vision learners},
@@ -749,16 +485,6 @@
   pages={16000--16009},
   year={2022}
 }
-% MAE - core architecture for ImageED
-
-@article{devlin2019bert,
-  title={BERT: Pre-training of deep bidirectional transformers for language understanding},
-  author={Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
-  journal={Proceedings of NAACL-HLT},
-  pages={4171--4186},
-  year={2019}
-}
-% BERT - masked pretraining inspiration
 
 @inproceedings{he2016deep,
   title={Deep residual learning for image recognition},
@@ -767,29 +493,6 @@
   pages={770--778},
   year={2016}
 }
-% ResNet - ED-aware teacher backbone
-
-@inproceedings{zaidipre,
-  title={Pre-training via denoising for molecular property prediction},
-  author={Zaidi, Sheheryar and Schaarschmidt, Michael and Martens, James and Kim, Hyunjik and Teh, Yee Whye and Sanchez-Gonzalez, Alvaro and Battaglia, Peter and Pascanu, Razvan and Godwin, Jonathan},
-  booktitle={The Eleventh International Conference on Learning Representations},
-  year={2023}
-}
-% Denoising pretraining for molecules
-
-@article{vaswani2017attention,
-  title={Attention is all you need},
-  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
-  journal={Advances in Neural Information Processing Systems},
-  volume={30},
-  year={2017}
-}
-% Transformer architecture
-
-% =============================================================================
-% SECTION 8: Datasets and Benchmarks
-% =============================================================================
-% Relevance: EDG++ evaluated on QM9, rMD17; pretrained on PCQM4Mv2
 
 @article{ramakrishnan2014quantum,
   title={Quantum chemistry structures and properties of 134 kilo molecules},
@@ -801,7 +504,6 @@
   year={2014},
   publisher={Nature Publishing Group}
 }
-% QM9 dataset
 
 @article{christensen2020role,
   title={On the role of gradients for machine learning of molecular energies and forces},
@@ -813,63 +515,30 @@
   year={2020},
   publisher={IOP Publishing}
 }
-% rMD17 dataset
 
-@article{hu2021ogb,
+@inproceedings{hu2021ogb,
   title={OGB-LSC: A large-scale challenge for machine learning on graphs},
   author={Hu, Weihua and Fey, Matthias and Ren, Hongyu and Nakata, Maho and Dong, Yuxiao and Leskovec, Jure},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={34},
   pages={29029--29043},
   year={2021}
 }
-% OGB-LSC and PCQM4Mv2 - pretraining data source
 
-@article{chmiela2018towards,
-  title={Towards exact molecular dynamics simulations with machine-learned force fields},
-  author={Chmiela, Stefan and Sauceda, Huziel E and M{\"u}ller, Klaus-Robert and Tkatchenko, Alexandre},
-  journal={Nature Communications},
-  volume={9},
-  number={1},
-  pages={3887},
-  year={2018},
-  publisher={Nature Publishing Group UK London}
-}
-% MD17 original dataset
-
-@article{xiang2025edbenchlargescaleelectrondensity,
+@inproceedings{xiang2025edbenchlargescaleelectrondensity,
   title={EDBench: Large-scale electron density data for molecular modeling},
   author={Xiang, Hongxin and Li, Ke and Liu, Mingquan and Cheng, Zhixiang and Yao, Bin and Du, Wenjie and Xia, Jun and Zeng, Li and Jin, Xin and Zeng, Xiangxiang},
-  journal={arXiv preprint arXiv:2505.09262},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS) Datasets and Benchmarks Track},
   year={2025}
 }
-% EDBench - ED pretraining data
 
-@article{wu2018moleculenet,
-  title={MoleculeNet: a benchmark for molecular machine learning},
-  author={Wu, Zhenqin and Ramsundar, Bharath and Feinberg, Evan N and Gomes, Joseph and Geniesse, Caleb and Pappu, Aneesh S and Leswing, Karl and Pande, Vijay},
-  journal={Chemical Science},
-  volume={9},
-  number={2},
-  pages={513--530},
-  year={2018},
-  publisher={Royal Society of Chemistry}
-}
-% MoleculeNet benchmark
-
-% =============================================================================
-% SECTION 9: Deep Learning Foundations and Architectures
-% =============================================================================
-% Relevance: General deep learning methods used in EDG++
-
-@article{paszke2019pytorch,
+@inproceedings{paszke2019pytorch,
   title={PyTorch: An imperative style, high-performance deep learning library},
   author={Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and others},
-  journal={Advances in Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
   volume={32},
   year={2019}
 }
-% PyTorch framework
 
 @inproceedings{girshick2015fast,
   title={Fast R-CNN},
@@ -878,7 +547,6 @@
   pages={1440--1448},
   year={2015}
 }
-% Smooth L1 loss origin
 
 @inproceedings{qi2017pointnet,
   title={PointNet: Deep learning on point sets for 3D classification and segmentation},
@@ -887,7 +555,6 @@
   pages={652--660},
   year={2017}
 }
-% PointNet - point cloud baseline
 
 @inproceedings{cciccek20163d,
   title={3D U-Net: Learning dense volumetric segmentation from sparse annotation},
@@ -897,7 +564,6 @@
   year={2016},
   organization={Springer}
 }
-% 3D U-Net - voxel baseline
 
 @article{guo2020deep,
   title={Deep learning for 3D point clouds: A survey},
@@ -909,16 +575,6 @@
   year={2020},
   publisher={IEEE}
 }
-% 3D point cloud survey
-
-@inproceedings{hara2018can,
-  title={Can spatiotemporal 3D CNNs retrace the history of 2D CNNs and ImageNet?},
-  author={Hara, Kensho and Kataoka, Hirokatsu and Satoh, Yutaka},
-  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
-  pages={6546--6555},
-  year={2018}
-}
-% ResNet3D - voxel encoder
 
 @article{delano2002pymol,
   title={PyMOL: An open-source molecular graphics tool},
@@ -929,27 +585,6 @@
   pages={82--92},
   year={2002}
 }
-% PyMOL - ED visualization tool
-
-@article{sud2016mayachemtools,
-  title={MayaChemTools: An open source package for computational drug discovery},
-  author={Sud, Manish},
-  journal={Journal of Chemical Information and Modeling},
-  volume={56},
-  number={12},
-  pages={2292--2297},
-  year={2016},
-  publisher={ACS Publications}
-}
-% MayaChemTools - DFT processing
-
-@book{todeschini2009molecular,
-  title={Molecular Descriptors for Chemoinformatics},
-  author={Todeschini, Roberto and Consonni, Viviana},
-  year={2009},
-  publisher={John Wiley \& Sons}
-}
-% Molecular descriptors reference
 
 @article{nienaber2000discovering,
   title={Discovering novel ligands for macromolecules using X-ray crystallographic screening},
@@ -961,7 +596,6 @@
   year={2000},
   publisher={Nature Publishing Group}
 }
-% X-ray crystallography for ED
 
 @article{goncharenko2005neutron,
   title={Neutron and X-ray diffraction study of the broken symmetry phase transition in solid deuterium},
@@ -973,41 +607,6 @@
   year={2005},
   publisher={Nature Publishing Group UK London}
 }
-% Neutron diffraction for ED
-
-@article{gilmer2017neural,
-  title={Neural message passing for quantum chemistry},
-  author={Gilmer, Justin and Schoenholz, Samuel S and Riley, Patrick F and Vinyals, Oriol and Dahl, George E},
-  journal={International Conference on Machine Learning},
-  pages={1263--1272},
-  year={2017},
-  organization={PMLR}
-}
-% MPNN - foundational GNN for molecules
-
-@article{kipf2017semi,
-  title={Semi-supervised classification with graph convolutional networks},
-  author={Kipf, Thomas N and Welling, Max},
-  journal={International Conference on Learning Representations},
-  year={2017}
-}
-% GCN - foundational graph neural network
-
-@article{velickovic2018graph,
-  title={Graph attention networks},
-  author={Veli{\v{c}}kovi{\'c}, Petar and Cucurull, Guillem and Casanova, Arantxa and Romero, Adriana and Li{\`o}, Pietro and Bengio, Yoshua},
-  journal={International Conference on Learning Representations},
-  year={2018}
-}
-% GAT - graph attention
-
-@article{xu2019powerful,
-  title={How powerful are graph neural networks?},
-  author={Xu, Keyulu and Hu, Weihua and Leskovec, Jure and Jegelka, Stefanie},
-  journal={International Conference on Learning Representations},
-  year={2019}
-}
-% GIN - expressive power of GNNs
 
 @article{xiang2024molecular,
   title={A molecular video-derived foundation model for scientific drug discovery},
@@ -1019,134 +618,6 @@
   year={2024},
   publisher={Nature Publishing Group UK London}
 }
-% Authors' prior work on molecular representations
-
-@inproceedings{xiang2024image,
-  title={An image-enhanced molecular graph representation learning framework},
-  author={Xiang, Hongxin and Jin, Shuting and Xia, Jun and Zhou, Man and Wang, Jianmin and Zeng, Li and Zeng, Xiangxiang},
-  booktitle={Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence},
-  pages={675},
-  year={2024}
-}
-% Authors' prior work - ImageMol
-
-@article{schutt2019unifying,
-  title={Unifying machine learning and quantum chemistry with a deep neural network for molecular wavefunctions},
-  author={Sch{\"u}tt, Kristof T and Gastegger, Michael and Tkatchenko, Alexandre and M{\"u}ller, Klaus-Robert and Maurer, Reinhard J},
-  journal={Nature Communications},
-  volume={10},
-  number={1},
-  pages={5024},
-  year={2019},
-  publisher={Nature Publishing Group UK London}
-}
-% SchNOrb - neural network for wavefunctions
-
-@article{qiao2020orbnet,
-  title={OrbNet: Deep learning for quantum chemistry using symmetry-adapted atomic-orbital features},
-  author={Qiao, Zhuoran and Welborn, Matthew and Anandkumar, Animashree and Manby, Frederick R and Miller III, Thomas F},
-  journal={The Journal of Chemical Physics},
-  volume={153},
-  number={12},
-  pages={124111},
-  year={2020},
-  publisher={AIP Publishing}
-}
-% OrbNet - orbital-based deep learning
-
-@article{pfau2020ab,
-  title={Ab initio solution of the many-electron Schr{\"o}dinger equation with deep neural networks},
-  author={Pfau, David and Spencer, James S and Matthews, Alexander GDG and Foulkes, W Matthew C},
-  journal={Physical Review Research},
-  volume={2},
-  number={3},
-  pages={033429},
-  year={2020},
-  publisher={APS}
-}
-% FermiNet - deep learning for quantum chemistry
-
-@article{hermann2020deep,
-  title={Deep-neural-network solution of the electronic Schr{\"o}dinger equation},
-  author={Hermann, Jan and Sch{\"a}tzle, Zeno and No{\'e}, Frank},
-  journal={Nature Chemistry},
-  volume={12},
-  number={10},
-  pages={891--897},
-  year={2020},
-  publisher={Nature Publishing Group UK London}
-}
-% PauliNet - neural network wavefunctions
-
-@article{keith2021combining,
-  title={Combining machine learning and computational chemistry for predictive insights into chemical systems},
-  author={Keith, John A and Vassilev-Galindo, Valentin and Cheng, Bingqing and Chmiela, Stefan and Gastegger, Michael and M{\"u}ller, Klaus-Robert and Tkatchenko, Alexandre},
-  journal={Chemical Reviews},
-  volume={121},
-  number={16},
-  pages={9816--9872},
-  year={2021},
-  publisher={ACS Publications}
-}
-% ML + computational chemistry review
-
-@article{von2020retrospective,
-  title={Retrospective on a decade of machine learning for chemical discovery},
-  author={Von Lilienfeld, O Anatole and M{\"u}ller, Klaus-Robert and Tkatchenko, Alexandre},
-  journal={Nature Communications},
-  volume={11},
-  number={1},
-  pages={4895},
-  year={2020},
-  publisher={Nature Publishing Group UK London}
-}
-% ML for chemical discovery retrospective
-
-@article{faber2017prediction,
-  title={Prediction errors of molecular machine learning models lower than hybrid DFT error},
-  author={Faber, Felix A and Hutchison, Luke and Huang, Bing and Gilmer, Justin and Schoenholz, Samuel S and Dahl, George E and Vinyals, Oriol and Kearnes, Steven and Riley, Patrick F and Von Lilienfeld, O Anatole},
-  journal={Journal of Chemical Theory and Computation},
-  volume={13},
-  number={11},
-  pages={5255--5264},
-  year={2017},
-  publisher={ACS Publications}
-}
-% ML prediction errors vs DFT
-
-@article{stokes2020deep,
-  title={A deep learning approach to antibiotic discovery},
-  author={Stokes, Jonathan M and Yang, Kevin and Swanson, Kyle and Jin, Wengong and Cubillos-Ruiz, Andres and Donghia, Nina M and MacNair, Craig R and French, Shawn and Carfrae, Lindsey A and Bloom-Ackermann, Zohar and others},
-  journal={Cell},
-  volume={180},
-  number={4},
-  pages={688--702},
-  year={2020},
-  publisher={Elsevier}
-}
-% Deep learning for drug discovery
-
-@article{wieder2020compact,
-  title={A compact review of molecular property prediction with graph neural networks},
-  author={Wieder, Oliver and Kohlbacher, Stefan and Kuenemann, M{\'e}laine and Garon, Arthur and Ducrot, Pierre and Seidel, Thomas and Langer, Thierry},
-  journal={Drug Discovery Today: Technologies},
-  volume={37},
-  pages={1--12},
-  year={2020},
-  publisher={Elsevier}
-}
-% GNN for molecular property prediction review
-
-@article{zhou2020graph,
-  title={Graph neural networks: A review of methods and applications},
-  author={Zhou, Jie and Cui, Ganqu and Hu, Shengding and Zhang, Zhengyan and Yang, Cheng and Liu, Zhiyuan and Wang, Lifeng and Li, Changcheng and Sun, Maosong},
-  journal={AI Open},
-  volume={1},
-  pages={57--81},
-  year={2020},
-  publisher={Elsevier}
-}
-% GNN review
 
 @inproceedings{liu2015sparse,
   title={Sparse convolutional neural networks},
@@ -1155,222 +626,45 @@
   pages={806--814},
   year={2015}
 }
-% Sparse CNN
-
-@article{lv2021voxel,
-  title={Voxel structure-based mesh reconstruction from a 3D point cloud},
-  author={Lv, Chenlei and Lin, Weisi and Zhao, Baoquan},
-  journal={IEEE Transactions on Multimedia},
-  volume={24},
-  pages={1815--1829},
-  year={2021},
-  publisher={IEEE}
-}
-% Voxel-based 3D reconstruction
 
 @book{markov1960theory,
   title={Extension of the limit theorems of probability theory to a sum of variables connected in a chain},
   author={Markov, Andrei Andreyevich},
   year={1906},
-  note={Reprinted in Appendix B of: R. Howard, Dynamic Probabilistic Systems, Vol. 1, Wiley, 1971}
+  note={Reprinted in Appendix B of: R. Howard, Dynamic Probabilistic Systems, Vol. 1, Wiley, 1971},
+  publisher={American Mathematical Society}
 }
-% Markov chain / Markov property original reference
 
-% =============================================================================
-% SECTION 10: Additional Important References
-% =============================================================================
-
-@article{jumper2021highly,
-  title={Highly accurate protein structure prediction with AlphaFold},
-  author={Jumper, John and Evans, Richard and Pritzel, Alexander and Green, Tim and Figurnov, Michael and Ronneberger, Olaf and Tunyasuvunakool, Kathryn and Bates, Russ and {\v{Z}}{\'\i}dek, Augustin and Potapenko, Anna and others},
-  journal={Nature},
-  volume={596},
-  number={7873},
-  pages={583--589},
-  year={2021},
-  publisher={Nature Publishing Group UK London}
-}
-% AlphaFold - geometric deep learning success
-
-@article{corso2023diffdock,
-  title={DiffDock: Diffusion steps, twists, and turns for molecular docking},
-  author={Corso, Gabriele and St{\"a}rk, Hannes and Jing, Bowen and Barzilay, Regina and Jaakkola, Tommi},
-  journal={International Conference on Learning Representations},
-  year={2023}
-}
-% DiffDock - geometric deep learning for docking
-
-@article{stark2022equibind,
-  title={EquiBind: Geometric deep learning for drug binding structure prediction},
-  author={St{\"a}rk, Hannes and Ganea, Octavian and Pattanaik, Lagnajit and Barzilay, Regina and Jaakkola, Tommi},
-  journal={International Conference on Machine Learning},
-  pages={20503--20521},
-  year={2022},
-  organization={PMLR}
-}
-% EquiBind - equivariant binding prediction
-
-@article{jing2021equivariant,
-  title={Equivariant graph neural networks for 3D macromolecular structure},
-  author={Jing, Bowen and Eismann, Stephan and Suriana, Patricia and Townshend, Raphael JL and Dror, Ron},
-  journal={arXiv preprint arXiv:2106.03843},
-  year={2021}
-}
-% Equivariant GNN for macromolecules
-
-@article{geiger2022e3nn,
-  title={e3nn: Euclidean neural networks},
-  author={Geiger, Mario and Smidt, Tess},
-  journal={arXiv preprint arXiv:2207.09453},
-  year={2022}
-}
-% e3nn library for equivariant networks
-
-@article{weiler20183d,
-  title={3D steerable CNNs: Learning rotationally equivariant features in volumetric data},
-  author={Weiler, Maurice and Geiger, Mario and Welling, Max and Boomsma, Wouter and Cohen, Taco S},
-  journal={Advances in Neural Information Processing Systems},
-  volume={31},
-  year={2018}
-}
-% 3D steerable CNNs
-
-@article{anderson2019cormorant,
-  title={Cormorant: Covariant molecular neural networks},
-  author={Anderson, Brandon and Hy, Truong Son and Kondor, Risi},
-  journal={Advances in Neural Information Processing Systems},
-  volume={32},
-  year={2019}
-}
-% Cormorant - covariant molecular networks
-
-@article{klicpera2020fast,
-  title={Fast and uncertainty-aware directional message passing for non-equilibrium molecules},
-  author={Klicpera, Johannes and Giri, Shankari and Margraf, Johannes T and G{\"u}nnemann, Stephan},
-  journal={arXiv preprint arXiv:2011.14115},
-  year={2020}
-}
-% DimeNet++ with uncertainty
-
-@article{schutt2021equivariant,
-  title={Equivariant message passing for the prediction of tensorial properties and molecular spectra},
-  author={Sch{\"u}tt, Kristof T and Unke, Oliver T and Gastegger, Michael},
-  journal={International Conference on Machine Learning},
-  pages={9377--9388},
-  year={2021},
-  organization={PMLR}
-}
-% PaiNN - equivariant message passing
-
-@article{thölke2022torchmd,
-  title={TorchMD-NET: Equivariant transformers for neural network based molecular potentials},
-  author={Th{\"o}lke, Philipp and De Fabritiis, Gianni},
-  journal={International Conference on Learning Representations},
-  year={2022}
-}
-% TorchMD-NET
-
-@article{liao2024equiformerv2,
+@inproceedings{liao2024equiformerv2,
   title={EquiformerV2: Improved equivariant transformer for scaling to higher-degree representations},
   author={Liao, Yi-Lun and Wood, Brandon and Das, Abhishek and Smidt, Tess},
-  journal={International Conference on Learning Representations},
+  booktitle={International Conference on Learning Representations},
   year={2024}
 }
-% EquiformerV2 - improved equivariant transformer
 
-@article{passaro2023reducing,
+@inproceedings{passaro2023reducing,
   title={Reducing SO(3) convolutions to SO(2) for efficient equivariant GNNs},
   author={Passaro, Saro and Zitnick, C Lawrence},
-  journal={International Conference on Machine Learning},
+  booktitle={International Conference on Machine Learning},
   pages={27420--27438},
   year={2023},
   organization={PMLR}
 }
-% eSCN - efficient equivariant convolutions
 
-@article{chen2022structure,
-  title={Structure-aware transformer for graph representation learning},
-  author={Chen, Dexiong and O'Bray, Leslie and Borgwardt, Karsten},
-  journal={International Conference on Machine Learning},
-  pages={3469--3489},
-  year={2022},
-  organization={PMLR}
+@article{wang2023aimdchig,
+  title={AIMD-Chig: Exploring the conformational space of a 166-atom protein Chignolin with ab initio molecular dynamics},
+  author={Wang, Tong and He, Xinheng and Li, Mingyu and Li, Yusong and Bi, Ran and Wang, Yilin and Cheng, Chenxi and Shen, Xi and Meng, Jiale and Zhang, Hao and others},
+  journal={Scientific Data},
+  volume={10},
+  number={1},
+  pages={549},
+  year={2023},
+  publisher={Nature Publishing Group}
 }
-% Structure-aware transformer for graphs
 
-@article{liu2022molecular,
-  title={Molecular contrastive learning of representations via graph neural networks},
-  author={Liu, Shengchao and Wang, Hanchen and Liu, Weiyang and Lasenby, Joan and Guo, Hongyu and Tang, Jian},
-  journal={Nature Machine Intelligence},
-  volume={4},
-  number={3},
-  pages={279--287},
-  year={2022},
-  publisher={Nature Publishing Group UK London}
+@misc{frisch2016gaussian16,
+  title={Gaussian 16 Revision C.01},
+  author={Frisch, M. J. and Trucks, G. W. and Schlegel, H. B. and Scuseria, G. E. and Robb, M. A. and Cheeseman, J. R. and Scalmani, G. and Barone, V. and Petersson, G. A. and Nakatsuji, H. and others},
+  year={2016},
+  note={Gaussian Inc. Wallingford CT}
 }
-% MolCLR - molecular contrastive learning
-
-@article{wang2022molecular,
-  title={Molecular contrastive learning with chemical element knowledge graph},
-  author={Wang, Yin and Wang, Jianmin and Cao, Zhangming and Barati Farimani, Amir},
-  journal={Proceedings of the AAAI Conference on Artificial Intelligence},
-  volume={36},
-  number={4},
-  pages={4532--4540},
-  year={2022}
-}
-% Molecular contrastive learning with KG
-
-@article{fang2022geometry,
-  title={Geometry-enhanced molecular representation learning for property prediction},
-  author={Fang, Xiaomin and Liu, Lihang and Lei, Jian and He, Donglong and Zhang, Shanzhuo and Zhou, Jingbo and Wang, Fan and Wu, Hua and Wang, Haifeng},
-  journal={Nature Machine Intelligence},
-  volume={4},
-  number={2},
-  pages={127--134},
-  year={2022},
-  publisher={Nature Publishing Group UK London}
-}
-% GEM - geometry-enhanced molecular learning
-
-@article{zhou2023unimol,
-  title={Uni-Mol: A universal 3D molecular representation learning framework},
-  author={Zhou, Gengmo and Gao, Zhifeng and Ding, Qiankun and Zheng, Hang and Xu, Hongteng and Wei, Zhewei and Zhang, Linfeng and Ke, Guolin},
-  journal={International Conference on Learning Representations},
-  year={2023}
-}
-% Uni-Mol - universal 3D molecular learning
-
-@article{godwin2022simple,
-  title={Simple GNN regularisation for 3D molecular property prediction and beyond},
-  author={Godwin, Jonathan and Schaarschmidt, Michael and Gaunt, Alexander L and Sanchez-Gonzalez, Alvaro and Rubanova, Yulia and Velivckovic, Petar and Kirkpatrick, James and Battaglia, Peter},
-  journal={International Conference on Learning Representations},
-  year={2022}
-}
-% Noisy Nodes - GNN regularization
-
-@article{xu2022geodiff,
-  title={GeoDiff: A geometric diffusion model for molecular conformation generation},
-  author={Xu, Minkai and Yu, Lantao and Song, Yang and Shi, Chence and Ermon, Stefano and Tang, Jian},
-  journal={International Conference on Learning Representations},
-  year={2022}
-}
-% GeoDiff - diffusion for conformations
-
-@article{hoogeboom2022equivariant,
-  title={Equivariant diffusion for molecule generation in 3D},
-  author={Hoogeboom, Emiel and Satorras, V{\'\i}ctor Garcia and Vignac, Cl{\'e}ment and Welling, Max},
-  journal={International Conference on Machine Learning},
-  pages={8867--8887},
-  year={2022},
-  organization={PMLR}
-}
-% EDM - equivariant diffusion for molecules
-
-% =============================================================================
-% END OF BIBLIOGRAPHY
-% =============================================================================
-% Total: ~85 references covering all required research areas
-% All references are real, verifiable papers from reputable venues
-% =============================================================================
-

@@ -3,22 +3,19 @@
 
 \subsection{Preliminaries}
 
-% [Polish] Original: Electron density (ED) is a key bridge to understand the prediction of energy and forces in molecular force fields (MFF). ED is not only the core output of quantum mechanical calculations, but also provides a solid theoretical basis...
 \textbf{Background.} Electron density (ED) connects molecular geometry to energy and force predictions in molecular force fields (MFF). As the primary output of quantum mechanical calculations, ED provides the theoretical foundation for constructing accurate MFFs. The Hohenberg-Kohn theorem~\cite{hohenberg1964inhomogeneous} states that the ground-state energy is a unique functional of the electron density: $E = E[\rho]$. However, computing $\rho(\mathbf{r})$ requires expensive quantum chemical calculations, making it impractical at inference time. Our framework addresses this by treating ED as \emph{privileged information}---available during training but removed at inference to preserve scalability.
 
 \textbf{Notation and Problem Formulation.} The molecular geometry and the corresponding ground-truth labels with $k$ prediction tasks are $\{\mathcal{G}_i=(\mathcal{V}_i, \mathcal{E}_i)\}_{i=1}^n$ and $\{y_i\}_{i=1}^n\in\mathbb{R}^k$ respectively, where $\mathcal{V}_i\in\mathbb{R}^{n^v_i\times(3+d_i^v)}$ ($n^v_i$, 3, $d_i^v$ are the number of atoms, the coordinates, and the feature dimensions) and $\mathcal{E}_i\in\mathbb{R}^{n^e_i\times d_i^e}$ ($n^e_i$ is the number of edges and $d_i^e$ is the feature dimensions of bonds). The corresponding multi-view ED image and structural image are $\mathcal{U}\in\mathbb{R}^{N_v\times 4\times H\times W}$ and $\mathcal{S}\in\mathbb{R}^{N_s\times 3\times H\times W}$ respectively, where $N_v$ and $N_s$ denote the number of views for ED images ($N_v\!=\!6$) and structural images ($N_s\!=\!4$), and $H$, $W$ are the image height and width. 3 and 4 represent RGB and RGB-D channels, respectively.
 
-% [Polish] Original: This paper mainly defines four problems: (1) Pre-train a masked autoencoder (MAE)...
 The framework comprises four stages: (1) pre-train a masked autoencoder (MAE)~\cite{he2022masked} with ED encoder $f_{EDE}$ and decoder $f_{EDD}$ to learn representations $\mathcal{F}^{\mathcal{U}}\in\mathbb{R}^{d^U}$ from ED images $\mathcal{U}$; (2) pre-train an ED-aware teacher $f_{S}$ and ED predictor $f_{EDP}$ to map structural images $\mathcal{S}$ to structural features $\mathcal{F}^{\mathcal{S}}\in\mathbb{R}^{d^{S}}$ and then to ED-related features $\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}}\in\mathbb{R}^{d^U}$; (3) pre-train a reliability estimator $\phi_{eval}$ that predicts the reconstruction error of the teacher for each sample; (4) distill a geometry student $f_{G}$ using the ED-aware teacher, ED predictor, reliability estimator, and mapper $f_M$ with selective distillation.
 
 \subsection{Overview of the Method}
 
-% [Polish] Original: Here, we propose the reliability-aware EDG framework...to enable selective distillation (EDG++).
 We propose \textbf{EDG} (\textbf{E}lectron \textbf{D}ensity-enhanced \textbf{G}eometry learning) and its reliability-aware extension \textbf{EDG++}. As shown in Fig.~\ref{Fig2_Method}, the framework has four modules: (a) 2 million molecular conformations are processed with DFT to produce multi-view ED images with RGB-D channels (Section~\ref{sec:Generation_ED_Image}); (b) ImageED learns ED-related representations from these images via two self-supervised tasks (Section~\ref{sec:ED_representation_learning}); (c) an ED-aware teacher is trained to predict ED features from structural images by minimizing the discrepancy with ImageED features (Section~\ref{sec:Pretraining_of_ED-aware_Teacher}); (d) the teacher distills ED knowledge into a geometry student through an ED predictor and mapper (Section~\ref{sec:ED-enhanced_Molecular_Geometry_Learning}). EDG++ extends the base framework with a theoretical analysis of when selective distillation reduces gradient noise (Section~\ref{sec:Theoretical_Analysis}), a reliability estimator (Section~\ref{sec:Reliability_Estimator}), and an adaptive thresholding mechanism (Section~\ref{sec:Adaptive_Thresholding}).
 
 \begin{figure*}[!htb]
 \centering
-\includegraphics[width=\textwidth]{imgs_edgpp/our_method/EDG++框架图.pdf}
+\includegraphics[width=\textwidth]{imgs_edgpp/our_method/EDG++框架图_en.png}
 \caption{Overview of the proposed EDG/EDG++ framework. \textbf{(a)} Multi-view ED images with RGB-D channels are generated based on 2 million molecular conformers and DFT data, which contains the structural and ED information of the molecule. \textbf{(b)} ImageED with masked autoencoder (MAE) architecture and 2 pretext tasks ($\mathcal{L}_{VR}$ and $\mathcal{L}_{MR}$) is pretrained to extract ED-related features from multi-view ED images in (a). \textbf{(c)} The ED-aware teacher accepts the structural images as input and learns to transform it into ED features $\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}}$ using ED predictor and ED encoder in (b). The reliability estimator $\phi_{eval}$ is trained to predict the reconstruction error. \textbf{(d)} In downstream tasks, the ED-aware teacher, ED predictor, and reliability estimator from (c) are frozen to enhance the geometry student. EDG uses naive distillation while EDG++ uses reliability-aware selective distillation with adaptive thresholding. Note that there is no need for explicit involvement of electron density here because the ED teacher has the ability to extract ED-related information.}
 \label{Fig2_Method}
 \end{figure*}
@@ -26,7 +23,7 @@ We propose \textbf{EDG} (\textbf{E}lectron \textbf{D}ensity-enhanced \textbf{G}e
 \subsection{Generation of RGB-D Electron Density Images}
 \label{sec:Generation_ED_Image}
 
-As shown in Fig.~\ref{Fig2_Method}(a), we first obtain 2 million molecular conformations from PCQM4Mv2~\cite{hu2021ogb} and use density functional theory (DFT) with the basis set of 6-31G(d,p) and the exchange-correlation functional of B3LYP to generate DFT data for these molecular conformations~\cite{turney2012psi4}. For each molecule, the DFT data includes an electrostatic potential (ESP) file and an ED file stored in the form of a three-dimensional grid.
+As shown in Fig.~\ref{Fig2_Method}(a), we first obtain 2 million molecular conformations from PCQM4Mv2~\cite{hu2021ogb} and use density functional theory (DFT) with the B3LYP exchange-correlation functional and the 6-31G(d,p) basis set for sulfur-free molecules, and 6-31+G(d,p) (with diffuse functions) for sulfur-containing molecules, to generate DFT data for these molecular conformations~\cite{turney2012psi4}. For each molecule, the DFT data includes an electrostatic potential (ESP) file and an ED file stored in the form of a three-dimensional grid.
 
 Using PyMol~\cite{delano2002pymol}, we jointly render the molecular structure and ED information into multi-view RGB-D images $\mathcal{U}\in\mathbb{R}^{6\times 4\times 224\times 224}$. The RGB channels encode the electrostatic potential distribution of the ED surface using a red-white-blue colormap (representing positive, neutral, and negative regions, respectively), while the depth channel captures the spatial layout. Images are rendered from 6 canonical viewpoints to approximate rotational coverage. The detailed rendering pipeline, including all PyMol commands and view configurations, is provided in Appendix~\ref{sec:appendix_pymol}.
 
@@ -35,8 +32,7 @@ Compared to point cloud and voxel representations of ED, this image-based repres
 \subsection{ED Representation Learning with ImageED}
 \label{sec:ED_representation_learning}
 
-% [Polish] Original: The proposed ED images have two properties: (1) RGB and D channels use color...which is built following the ViT-Large/16 of MAE.
-The ED images exhibit two properties suited to self-supervised learning: (1) RGB channels encode the ED distribution while the depth channel encodes spatial layout, giving each pixel a clear physical meaning; (2) ED is spatially continuous, so masked regions can be predicted from context. We exploit both properties in ImageED, an encoder-decoder framework built on ViT-Large/16~\cite{dosovitskiy2020image} from MAE~\cite{he2022masked}, with two complementary tasks---\emph{visible reconstruction} and \emph{masked reconstruction}---that capture local and contextual ED information from 2 million images.
+The ED images exhibit two properties suited to self-supervised learning: (1) RGB channels encode the ED distribution while the depth channel encodes spatial layout, giving each pixel a clear physical meaning; (2) ED is spatially continuous, so masked regions can be predicted from context. We exploit both properties in ImageED, an encoder-decoder framework built on ViT-Base/16~\cite{dosovitskiy2020image} from MAE~\cite{he2022masked}, with two complementary tasks---\emph{visible reconstruction} and \emph{masked reconstruction}---that capture local and contextual ED information from 2 million images.
 
 For a given batch ($B$ molecules) of ED images $u\in\mathbb{R}^{B\times N_v\times c\times H\times W}$ (where $N_v, c, H, W=6, 4, 224, 224$), we first use a view-agnostic patch embed layer with a patch size of $n_p=16$ to transform $u$ into a pile of multi-view tokens $mt$:
 \begin{align}
@@ -44,7 +40,7 @@ For a given batch ($B$ molecules) of ED images $u\in\mathbb{R}^{B\times N_v\time
 mt_{i,j}=u\big[:, :, :,\; n_p \cdot i: n_p \cdot (i+1), \; n_p \cdot j: n_p \cdot (j+1)\big]
 \end{align}
 
-We define $n_t=H/n_p=W/n_p$ (= 14 for our setting) and $mt=\{mt_{i,j}|i, j\in\{0,\ldots,n_t{-}1\}\}\in\mathbb{R}^{B\times N_v\times n_t^2\times (n_p^2\times c)}$. Next, we add positional embeddings and expand along the view to get tokens $t\in\mathbb{R}^{B\times (N_v\times n_t^2)\times (n_p^2\times c)}$. We shuffle the token order and randomly mask 75\% to obtain masked tokens $t^m$ and unmasked tokens $t^u$.
+We define $n_t=H/n_p=W/n_p$ (= 14 for our setting) and $mt=\{mt_{i,j}|i, j\in\{0,\ldots,n_t{-}1\}\}\in\mathbb{R}^{B\times N_v\times n_t^2\times (n_p^2\times c)}$. Next, we add positional embeddings and expand along the view to get tokens $t\in\mathbb{R}^{B\times (N_v\times n_t^2)\times (n_p^2\times c)}$. We shuffle the token order and randomly mask 25\% to obtain masked tokens $t^m$ and unmasked tokens $t^u$.
 
 The unmasked tokens are input into the ED encoder $f_{EDE}$:
 \begin{align}
@@ -80,7 +76,6 @@ where $\lambda_{VR}$ and $\lambda_{MR}$ are the balance coefficients and we set 
 \subsection{Pretraining of ED-aware Teacher}
 \label{sec:Pretraining_of_ED-aware_Teacher}
 
-% [Polish] Original: Since generating ED data for every downstream task is computationally prohibitive...provide empirical evidence that this approximation is adequate for downstream performance.
 Since computing ED for every downstream task is prohibitive, we learn the mapping from conformations directly to ED features, bypassing explicit ED computation. The generation path is: conformation $\mathcal{S}\xrightarrow{\text{DFT}}$ ED data $\mathcal{U}\xrightarrow{\text{ImageED}}$ ED features $\mathcal{F}^{\mathcal{U}}$. We adopt a Markov assumption on this chain (\ie, $\mathcal{F}^{\mathcal{U}}$ depends on $\mathcal{S}$ only through $\mathcal{U}$), which justifies learning $p(\mathcal{F}^{\mathcal{U}}|\mathcal{S})$ without ED data at inference (see Appendix~\ref{sec:appendix_markov}). Under the Born-Oppenheimer framework for ground-state systems with fixed composition and charge, the Hohenberg-Kohn theorem guarantees that the electron density is uniquely determined by the nuclear geometry, supporting this assumption. In practice, the lossy multi-view projection from 3D density fields to 2D images introduces residual dependence that the Markov assumption does not capture; the consistent improvements across four architectures on two datasets suggest that this approximation is adequate.
 
 We instantiate this mapping with an ED-aware teacher $f_{\mathcal{S}}$ and ED predictor $f_{EDP}$. The teacher uses ResNet18~\cite{he2016deep} with view-wise average pooling to extract structural features from 4-view structural images $\mathcal{S}$ rendered via PyMol. The ED predictor $f_{EDP}$ is a 2-layer MLP (Linear$\rightarrow$Softplus$\rightarrow$Linear) that maps structural features to ED features:
@@ -99,7 +94,6 @@ where $L1$ denotes L1 distance. With the ED-aware teacher, the costly ED image c
 \subsection{Theoretical Analysis of Selective Distillation}
 \label{sec:Theoretical_Analysis}
 
-% [Polish] Original: We provide a formal analysis of why selective distillation can outperform naive distillation...the consistent empirical improvements provide complementary evidence.
 We analyze why selective distillation can outperform naive distillation when teacher reliability varies across samples. This analysis motivates the reliability estimator (Section~\ref{sec:Reliability_Estimator}) and the adaptive thresholding mechanism (Section~\ref{sec:Adaptive_Thresholding}). The analysis uses simplifying assumptions and yields an upper-bound result; the empirical improvements (Section~\ref{sec:Experiments}) provide complementary support.
 
 \textbf{Noisy Teacher Model.} In cross-modal distillation, the teacher's ED feature prediction for sample $i$ can be decomposed as:
@@ -130,18 +124,15 @@ Consequently, selective distillation reduces the expected gradient noise wheneve
 \end{equation}
 \end{proposition}
 
-% [Polish] Original: The proof follows directly from bounding each term...provide empirical evidence that this approximation is effective.
 The proof bounds each term under the independence assumption (Appendix~\ref{sec:appendix_proof}). Proposition~\ref{prop:gradient_noise} assumes access to the true teacher errors $\|\varepsilon_i\|$ for subset selection; in practice, EDG++ uses a learned reliability estimator (Section~\ref{sec:Reliability_Estimator}) as a proxy. The proposition thus establishes an \emph{achievable} noise reduction bound---the tighter the estimator's ranking correlates with true $\|\varepsilon_i\|$, the closer EDG++ approaches the oracle bound. The downstream improvements across architectures (Section~\ref{sec:Experiments}) support that this approximation works well in practice.
 
 \textbf{When is the condition satisfied?} Condition~\eqref{eq:improvement_condition} holds whenever the discarded samples carry \emph{disproportionately} high noise relative to their count---\ie, when the teacher error distribution is heavy-tailed. Concretely, if filtering the top $\alpha$ fraction of highest-error samples removes more than $\alpha$ fraction of total squared error, selective distillation reduces gradient noise. We emphasize that Proposition~\ref{prop:gradient_noise} establishes an \emph{upper bound} on gradient noise under simplifying assumptions (bounded Jacobians, Cauchy--Schwarz aggregation); it identifies a sufficient condition for noise reduction rather than a tight characterization.
 
-% [Polish] Original: Our empirical analysis in Section~\ref{sec:error_distribution} provides indirect but supportive evidence...inducing positive dependence that strengthens the bound.
 Section~\ref{sec:error_distribution} provides \emph{indirect but supportive} evidence for the heavy-tailed structure. The evidence is indirect because we observe downstream student prediction errors rather than the teacher reconstruction errors $\|\varepsilon_i\|$ in Proposition~\ref{prop:gradient_noise}. The two quantities are causally linked: samples with large $\|\varepsilon_i\|$ receive noisier supervision, producing systematically larger prediction errors. This pattern holds across three architectures and four property types (27--38\% tail error reduction), supporting the causal interpretation. The independence assumption between $\|\varepsilon_i\|$ and $\|J_i\|_F$ is also conservative: molecular structural complexity simultaneously increases both teacher error and student sensitivity, inducing positive dependence that tightens the bound (Appendix~\ref{sec:appendix_remarks}).
 
 \subsection{Reliability Estimator}
 \label{sec:Reliability_Estimator}
 
-% [Polish] Original: Motivated by Proposition, we introduce a reliability estimator...alter the teacher's alignment loss landscape.
 Following Proposition~\ref{prop:gradient_noise}, we introduce a reliability estimator $\phi_{eval}: \mathbb{R}^{d^S} \rightarrow \mathbb{R}$ as a practical proxy for the per-sample teacher error $\|\varepsilon_i\|$. It is a lightweight 2-layer MLP (Linear(512, 256)$\rightarrow$Softplus$\rightarrow$Linear(256, 1)) jointly trained with the ED-aware teacher in Stage~II. Both its input features and regression target are detached from the teacher's computation graph to prevent gradient interference: without input detachment, the evaluator's gradient could push the teacher toward making errors more \emph{predictable} rather than more \emph{accurate}; without target detachment, $\mathcal{L}_{eval}$ would back-propagate through $\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}}$ and alter the alignment loss landscape. The training objective is:
 \begin{equation}
     \mathcal{L}_{eval} = \mathbb{E}\left[\left|\phi_{eval}\!\bigl(\operatorname{sg}(\mathcal{F}^{\mathcal{S}})\bigr) - \operatorname{sg}\!\bigl(\|\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}} - \mathcal{F}^{\mathcal{U}}\|_2\bigr)\right|\right]
@@ -152,7 +143,6 @@ At inference, we convert the evaluator output to a confidence score $c_i = -\phi
 \subsection{Adaptive Thresholding Mechanism}
 \label{sec:Adaptive_Thresholding}
 
-% [Polish] Original: To implement selective distillation, we introduce an adaptive thresholding mechanism...see Appendix for details.
 We implement selective distillation with an adaptive thresholding mechanism combining global (dataset-level) and local (batch-level) statistics. The form $\tau = \mu + \kappa \cdot \sigma$ is \emph{distribution-agnostic}: since $\mu$ and $\sigma$ come from the same confidence score population, a given $\kappa$ yields comparable filtering strictness regardless of the score distribution's scale or shape. No distributional assumption is required; under approximate normality, the retention rate simplifies to $\Phi(-\kappa)$ (Appendix~\ref{sec:appendix_remarks}).
 
 \textbf{Local Threshold.} For each mini-batch $\mathcal{B}$, we compute:
@@ -175,7 +165,6 @@ where $\beta \in [0, 1]$ balances local adaptivity and global consistency. Setti
 \subsection{ED-enhanced Molecular Geometry Learning}
 \label{sec:ED-enhanced_Molecular_Geometry_Learning}
 
-% [Polish] Original: In the training stage of downstream tasks, geometry data and structural images are input into the geometry student...
 During downstream training, the geometry student $f_{G}$ and the frozen ED-aware teacher extract features $\mathcal{F}^{\mathcal{G}}$ and $\mathcal{F}^{\mathcal{S}}$ from geometry data and structural images, respectively. Here $f_{G}$ can be any geometry-based model (\eg, SchNet~\cite{schutt2017schnet}, SphereNet~\cite{liu2022spherical}, Equiformer~\cite{liao2023equiformer}, ViSNet~\cite{wang2024enhancing}).
 
 A mapper $f_M$ (a single linear layer) projects geometry features into the structural space; the nonlinear transformation is handled by the frozen ED predictor $f_{EDP}$:

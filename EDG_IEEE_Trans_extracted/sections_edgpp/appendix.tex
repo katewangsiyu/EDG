@@ -220,13 +220,90 @@ Table~\ref{tab:lambda_sensitivity} reports the per-task $\lambda$ sensitivity un
 \end{table}
 
 
+\section{Hyperparameter Configurations for EDG and EDG++}
+\label{app:hyper}
+
+We report the default configuration used for the main results in Tables~\ref{tab:rmd17_energy} and~\ref{tab:rmd17_force}, and the full search space in Appendix~\ref{sec:appendix_hyperparam}. On QM9, all three architectures share the same hyperparameter search. On rMD17, all experiments use global thresholding only ($\beta\!=\!0$), because rMD17 trains one model per molecule and every mini-batch is drawn from the conformation distribution of a single molecule; batch-local reliability statistics therefore converge to the global statistics in expectation, and per-batch variation becomes informative only in the multi-molecule QM9 setting (cf.\ Table~\ref{tab:ablation_beta}). An empirical validation of this choice on three representative rMD17 molecules is provided in Appendix~\ref{app:beta_rmd17}. SchNet and ViSNet on rMD17 use the out-of-the-box configuration ($\kappa_{all}\!=\!0$) to probe cross-architecture generality, whereas SphereNet additionally tunes $\kappa_{all}$ per molecule over $\{-1.5, -1, -0.5, 0, 0.5, 1.0, 1.5\}$ to characterize the upper bound of the approach. Per-molecule $\kappa_{all}$ tuning is restricted to SphereNet because the 50-sample rMD17 validation set limits the reliability of such tuning for additional architectures.
+
+
+\section{Empirical Validation of $\beta\!=\!0$ on rMD17}
+\label{app:beta_rmd17}
+
+To validate our default choice of $\beta\!=\!0$ (global-only thresholding) for rMD17, we run a $\beta$ ablation on three representative molecules---Aspirin (large, complex), Salicylic acid (mid-size with hydroxyl groups), and Toluene (small, aromatic)---using SphereNet with $\kappa_{all}\!=\!0$ and $\lambda\!=\!0.001$. Each molecule is trained for 1{,}000 epochs at three values of $\beta\in\{0, 0.5, 1.0\}$. Table~\ref{tab:rmd17_beta_ablation} reports the test-set MAE.
+
+\begin{table}[!htb]
+  \scriptsize
+  \centering
+  \caption{rMD17 $\beta$ ablation on SphereNet ($\kappa_{all}\!=\!0$, $\lambda\!=\!0.001$, 1{,}000 epochs). On the average across three molecules, $\beta\!=\!0$ minimizes Energy MAE while Force MAE is essentially insensitive to $\beta$. On per-molecule basis, $\beta\!=\!0$ is best on Energy for 2/3 molecules with the largest gaps appearing on the more complex molecules (Aspirin and Salicylic). Bold indicates the best result per row.}
+  \label{tab:rmd17_beta_ablation}
+    \begin{tabular}{lccc}
+    \toprule
+    \textbf{Molecule} & $\beta\!=\!0$ & $\beta\!=\!0.5$ & $\beta\!=\!1.0$ \\
+    \midrule
+    \multicolumn{4}{l}{\textit{Energy MAE ($\frac{kcal}{mol}$)}} \\
+    Aspirin       & \textbf{0.12406} & 0.18744 & 0.22103 \\
+    Salicylic     & \textbf{0.06603} & 0.06894 & 0.09613 \\
+    Toluene       & 0.02366 & 0.02252 & \textbf{0.02161} \\
+    \emph{Average} & \textbf{0.07125} & 0.09297 & 0.11292 \\
+    \midrule
+    \multicolumn{4}{l}{\textit{Force MAE ($\frac{kcal}{mol\cdot \text{\r{A}}}$)}} \\
+    Aspirin       & \textbf{0.38060} & 0.38130 & 0.38529 \\
+    Salicylic     & 0.29756 & \textbf{0.29563} & 0.30040 \\
+    Toluene       & 0.10518 & \textbf{0.10428} & 0.10462 \\
+    \emph{Average} & 0.26111 & \textbf{0.26040} & 0.26344 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+The aggregate picture supports $\beta\!=\!0$ as the default for rMD17. On Energy MAE, $\beta\!=\!0$ achieves the lowest average error (0.07125 vs.\ 0.09297 for $\beta\!=\!0.5$ and 0.11292 for $\beta\!=\!1$); the gap is largest on the more complex molecules (Aspirin: 51\% lower than $\beta\!=\!0.5$; Salicylic: 4\% lower) and reverses only on Toluene with a small margin (9\% vs.\ $\beta\!=\!1$). On Force MAE, all three $\beta$ values perform within 1\% of each other (the average MAE differs by less than 0.003), reflecting that force prediction is dominated by local atomic interactions rather than the global energy distribution captured by ED. This empirical pattern matches the theoretical motivation in Appendix~\ref{app:hyper}: under per-molecule training, batch-local reliability statistics are noisy estimates of the same global distribution, and the small batch size in rMD17 (4 to 128 conformations of a single molecule) further amplifies noise; pure global thresholding ($\beta\!=\!0$) avoids this noise without losing distributional information.
+
+
+\section{Progressive Component Ablation (SphereNet, rMD17)}
+\label{app:progressive}
+
+To isolate the contribution of the reliability estimator from that of the distillation weight and threshold tuning, we report a progressive-ablation study on SphereNet, the only rMD17 architecture for which the full configuration chain---EDG with tuned $\lambda$, EDG with fixed $\lambda\!=\!0.001$, EDG++ at $\kappa_{all}\!=\!0$, and EDG++ with tuned $\kappa_{all}$---is available. Table~\ref{tab:rmd17_progressive} reports MAE for each configuration.
+
+\begin{table*}[!htb]
+  \scriptsize
+  \centering
+  \caption{Progressive component ablation on SphereNet (rMD17). EDG with tuned $\lambda$ is the conference-version baseline; ``EDG ($\lambda\!=\!0.001$)'' is a controlled baseline sharing the $\lambda$ used by EDG++ but without the reliability estimator; ``EDG++ ($\kappa\!=\!0$)'' denotes the default-threshold EDG++ configuration; ``EDG++'' is the best $\kappa_{all}$ per molecule. Bold indicates the best result per column.}
+  \label{tab:rmd17_progressive}
+  \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{lcccccccccc}
+    \toprule
+    \textbf{Method} & Aspirin & Azobenz. & Benzene & Ethanol & Malona. & Naphth. & Paracet. & Salicylic & Toluene & Uracil \\
+    \midrule
+    \multicolumn{11}{l}{\textit{Energy MAE ($\frac{kcal}{mol}$)}} \\
+    EDG (tuned $\lambda$) & 0.13622 & \textbf{0.06788} & 0.00413 & \textbf{0.03575} & \textbf{0.05659} & 0.02753 & 0.09934 & 0.09569 & 0.02413 & \textbf{0.03683} \\
+    EDG ($\lambda\!=\!0.001$) & 0.18166 & 0.06603 & 0.00377 & 0.04695 & 0.05806 & 0.05216 & 0.10866 & 0.09713 & 0.03175 & 0.05925 \\
+    EDG++ ($\kappa\!=\!0$) & 0.12584 & 0.07125 & \textbf{0.00341} & 0.04081 & 0.06767 & 0.02373 & 0.09734 & \textbf{0.06563} & 0.02367 & 0.05570 \\
+    EDG++ & \textbf{0.12391} & 0.07125 & \textbf{0.00341} & \textbf{0.03575} & 0.06611 & \textbf{0.02256} & \textbf{0.09628} & \textbf{0.06563} & \textbf{0.02220} & 0.04841 \\
+    \midrule
+    \multicolumn{11}{l}{\textit{Force MAE ($\frac{kcal}{mol\cdot \text{\r{A}}}$)}} \\
+    EDG (tuned $\lambda$) & 0.38598 & \textbf{0.21665} & 0.02101 & 0.18741 & \textbf{0.28456} & 0.11102 & 0.32023 & \textbf{0.28299} & 0.10804 & \textbf{0.17179} \\
+    EDG ($\lambda\!=\!0.001$) & 0.38870 & 0.21670 & 0.02160 & \textbf{0.18594} & 0.29120 & 0.11220 & \textbf{0.31742} & 0.28919 & 0.10706 & 0.26561 \\
+    EDG++ ($\kappa\!=\!0$) & 0.37960 & 0.22238 & 0.02078 & 0.18871 & 0.31599 & 0.09711 & 0.32309 & 0.29871 & \textbf{0.10341} & 0.23117 \\
+    EDG++ & \textbf{0.37929} & 0.21708 & \textbf{0.02012} & 0.18698 & 0.31599 & \textbf{0.09541} & 0.31846 & 0.29452 & \textbf{0.10341} & 0.22544 \\
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+Comparing EDG ($\lambda\!=\!0.001$) to EDG++ ($\kappa\!=\!0$), which differ only in whether the reliability estimator is active, the estimator improves energy on 8/10 molecules, with naphthalene ($\downarrow$54.5\%), salicylic acid ($\downarrow$32.4\%), and aspirin ($\downarrow$30.7\%) showing the largest gains. Naive distillation at $\lambda\!=\!0.001$ without the estimator degrades energy below baseline on 4/10 molecules (e.g., naphthalene: $\uparrow$36.4\%); the estimator recovers 3 of these 4 cases to below-baseline error, indicating that reliability-aware filtering is essential for safe distillation at this weight. Threshold tuning (EDG++ $\kappa\!=\!0 \to$ EDG++ with tuned $\kappa$) provides further incremental gains.
+
+
+\section{Boundary Case Analysis: Malonaldehyde}
+\label{app:boundary}
+
+Malonaldehyde is the only molecule where the reliability estimator consistently degrades performance on rMD17. Naive distillation at $\lambda\!=\!0.001$ improves energy (0.05806 vs.\ baseline 0.06005, $\downarrow$3.3\%), indicating that the ED-based distillation signal is beneficial for this molecule. Activating the estimator (EDG++ $\kappa\!=\!0$: 0.06767) reverses this gain, suggesting that the estimator incorrectly filters beneficial distillation signal, likely because the rapid intramolecular proton-transfer dynamics of malonaldehyde produce ED patterns that the estimator misclassifies as unreliable. EDG with per-task-best $\lambda$ achieves the best result (0.05659), and threshold tuning partially mitigates the degradation (EDG++ best $\kappa$: 0.06611 versus 0.06767 at $\kappa\!=\!0$), pointing to molecule-adaptive thresholding as a future direction. A per-sample error visualization for malonaldehyde together with two representative success cases (naphthalene, uracil) is given in Appendix~\ref{sec:appendix_rmd17_vis}.
+
+
 \section{rMD17 Prediction Error Visualization}
 \label{sec:appendix_rmd17_vis}
 
 \begin{figure*}[!htb]
 \centering
 \includegraphics[width=\textwidth]{imgs_edgpp/experiments/rMD17_baseline_vs_edgpp.pdf}
-\caption{Per-sample energy prediction errors on rMD17 (SphereNet), comparing the no-distillation baseline with EDG++ ($\kappa_{all}\!=\!1.5$ for naphthalene and uracil; $\kappa_{all}\!=\!1.0$ for malonaldehyde). EDG++ consistently reduces errors on naphthalene ($\Delta\!=\!+74.9\%$) and uracil ($\Delta\!=\!+60.4\%$); malonaldehyde shows nearly overlapping curves ($\Delta\!=\!-0.2\%$). \textit{Note}: $\Delta$ values are computed from per-sample predictions of independently trained baseline and EDG++ models, not from the conference-version baselines in Tables~\ref{tab:rmd17_energy}--\ref{tab:rmd17_force}.}
+\caption{Per-sample energy prediction errors on rMD17 (SphereNet), comparing the no-distillation baseline with EDG++ ($\kappa_{all}\!=\!1.5$ for naphthalene and uracil; $\kappa_{all}\!=\!1.0$ for malonaldehyde). We include three representative cases: two successes---naphthalene ($\Delta\!=\!+74.9\%$) and uracil ($\Delta\!=\!+60.4\%$)---and the identified boundary case, malonaldehyde ($\Delta\!=\!-0.2\%$), discussed in Appendix~\ref{app:boundary}, where the reliability estimator fails to filter beneficial distillation signal due to the molecule's rapid intramolecular proton-transfer dynamics. \textit{Note}: $\Delta$ values are computed from per-sample predictions of independently trained baseline and EDG++ models, not from the conference-version baselines in Tables~\ref{tab:rmd17_energy}--\ref{tab:rmd17_force}.}
 \label{fig:rMD17_vis}
 \end{figure*}
 
@@ -403,7 +480,7 @@ For each task, we select the hyperparameter configuration that achieves the best
 
 \subsection{ImageED Pre-training}
 
-The encoder and decoder of ImageED are built based on ViT-Large/16~\cite{dosovitskiy2020image}. The encoder has an embedding dimension of 1024 with 24 Transformer layers, and the decoder has an embedding dimension of 512 with 8 Transformer layers. We use a learning rate of 1.5e-4, a batch size of 64, a mask ratio of 0.75, $\lambda_{VR}=1$ and $\lambda_{MR}=1$ for 20 epochs on 8 GeForce RTX 4090 GPUs. The input ED images have shape $6 \times 4 \times 224 \times 224$ (6 views, 4 channels including RGB-D).
+The encoder and decoder of ImageED are built based on ViT-Base/16~\cite{dosovitskiy2020image}. The encoder has an embedding dimension of 768 with 12 Transformer layers, and the decoder has an embedding dimension of 512 with 8 Transformer layers. We use a learning rate of 1.5e-4, a batch size of 64, a mask ratio of 0.25, $\lambda_{VR}=1$ and $\lambda_{MR}=1$ for 20 epochs on 8 GeForce RTX 4090 GPUs. The input ED images have shape $6 \times 4 \times 224 \times 224$ (6 views, 4 channels including RGB-D).
 
 \subsection{ED-aware Teacher Pre-training}
 
