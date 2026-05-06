@@ -1,0 +1,17 @@
+{
+  "reference": "per-trajectory frame 0 (initial)",
+  "baseline": {
+    "per_traj_mean_RMSD_mean": 1.3524786233901978,
+    "per_traj_mean_RMSD_std": 0.6407326459884644,
+    "final_RMSD_mean": 1.777948021888733,
+    "final_RMSD_std": 0.7151586413383484,
+    "n_traj": 10
+  },
+  "edg_pp": {
+    "per_traj_mean_RMSD_mean": 1.4619061946868896,
+    "per_traj_mean_RMSD_std": 0.764624297618866,
+    "final_RMSD_mean": 2.1069252490997314,
+    "final_RMSD_std": 1.015558123588562,
+    "n_traj": 10
+  }
+}

@@ -499,3 +499,17 @@ The reliability estimator is a lightweight MLP with architecture: Linear(512, 25
 \subsection{Downstream Task Training}
 
 For QM9, we use the dataset split from Geom3D~\cite{liu2024symmetry}: 110K for training, 10K for validation, and 11K for testing. For rMD17, we use 950 for training, 50 for validation, and 1000 for testing. The mapper $f_M$ and task predictor $f_T$ each consist of a single linear layer. We select the best checkpoint based on validation MAE for QM9 and validation force MAE for rMD17.
+
+\section{Chignolin Reliability Distribution (Out-of-Distribution Sanity Check)}
+\label{sec:appendix_chignolin_sanity}
+
+To support the body claim (Sec.~\ref{sec:case_study_chignolin}) that the Chignolin training set sits in a \emph{partly trustable} reliability regime relative to the rMD17 small molecules used to pre-train the ED-aware teacher, we pass a uniform random subsample of $n\!=\!600$ Chignolin training conformations through the frozen ED teacher pipeline (PyMol multi-view rendering $\to$ ResNet-18 video teacher $\to$ EDEvaluator $\to$ negated reliability score) and report the distribution.
+
+Figure~\ref{fig:chignolin_reliability_hist} shows the resulting histogram. The Chignolin reliability distribution is centered at \textbf{$-0.858 \pm 0.054$} (mean $\pm$ std), shifted by roughly $0.07$--$0.18$ units toward lower reliability than the per-molecule means cited for the 10 rMD17 molecules ($-0.68$ to $-0.79$, std $\approx\!0.055$ each). Critically, \textbf{78\%} of Chignolin conformations still fall within the rMD17 mean $\pm 2\sigma$ window, i.e.\ a sizeable trustable subset coexists with a low-reliability bulk. This is precisely the regime in which (i)~naive distillation EDG is most likely to incur negative transfer on the low-reliability bulk---consistent with the $+\!4.0\%$ energy MAE increase reported in Table~\ref{tab:chignolin_energy_force}---and (ii)~reliability-gated selective distillation EDG++ can route teacher signal away from the unreliable bulk while preserving its benefit on the trustable subset, yielding the net $-\!6.8\%$ improvement.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.85\linewidth]{imgs_edgpp/experiments/chignolin_case_study/appendix_reliability_hist.pdf}
+\caption{Reliability score distribution on a 600-conformation random subsample of the Chignolin training set ($n\!=\!7634$ total). Shaded grey band indicates the rMD17 per-molecule reliability mean range ($-0.79$ to $-0.68$) plus 2$\sigma$ on each side. The Chignolin mean (red dashed line, $-0.86$) sits below the rMD17 range, but a 78\% tail overlaps the rMD17-trustable regime, motivating reliability-gated selective distillation.}
+\label{fig:chignolin_reliability_hist}
+\end{figure}

@@ -1,0 +1,10 @@
+{
+  "_note": "Per-conf rotation overrides used for representatives_v4 (Plan A smooth tube). All share rot_z=275; rot_y/rot_x differ per conf as listed below.",
+  "default": {"rot_z": 275, "rot_y": 0, "rot_x": 20},
+  "overrides": {
+    "569":  {"rot_z": 275, "rot_y":  0, "rot_x": -20},
+    "659":  {"rot_z": 275, "rot_y": 45, "rot_x":  20},
+    "2950": {"rot_z": 275, "rot_y": 90, "rot_x": -20},
+    "6456": {"rot_z": 275, "rot_y": 90, "rot_x": -20}
+  }
+}

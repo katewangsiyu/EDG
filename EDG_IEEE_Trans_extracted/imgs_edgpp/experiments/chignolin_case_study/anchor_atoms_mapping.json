@@ -1,0 +1,10 @@
+{
+  "_note": "Anchor heavy-atom indices into chignolin.npz frames (166-atom layout). Re-derived 2026-05-06 from 5AWL.pdb + pdb_to_npz_heavy_mapping.json after accidental loss of original.",
+  "source_pdb": "5AWL (CLN025, YYDPETGTWY)",
+  "anchor_atoms_npz_idx": {
+    "D3_O": 55,
+    "E5_O": 84,
+    "G7_N": 99,
+    "T8_N": 106
+  }
+}

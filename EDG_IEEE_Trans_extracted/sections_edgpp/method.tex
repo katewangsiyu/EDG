@@ -138,7 +138,7 @@ Following Proposition~\ref{prop:gradient_noise}, we introduce a reliability esti
     \mathcal{L}_{eval} = \mathbb{E}\left[\left|\phi_{eval}\!\bigl(\operatorname{sg}(\mathcal{F}^{\mathcal{S}})\bigr) - \operatorname{sg}\!\bigl(\|\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}} - \mathcal{F}^{\mathcal{U}}\|_2\bigr)\right|\right]
 \end{equation}
 where $\operatorname{sg}(\cdot)$ denotes stop-gradient (detach).
-At inference, we convert the evaluator output to a confidence score $c_i = -\phi_{eval}(\mathcal{F}^{\mathcal{S},(i)})$, where higher $c_i$ indicates higher estimated reliability. The threshold form $\tau = \mu + \kappa\sigma$ (Section~\ref{sec:Adaptive_Thresholding}) is inherently scale-invariant, ensuring that $\kappa$ controls the retention rate in units of standard deviations regardless of the absolute scale of $c_i$.
+At inference, we convert the evaluator output to a confidence score $c_i = -\phi_{eval}(\mathcal{F}^{\mathcal{S},(i)})$, where higher $c_i$ indicates higher estimated reliability. The threshold form $\tau = \mu + \kappa\sigma$ (Section~\ref{sec:Adaptive_Thresholding}) is inherently scale-invariant, ensuring that $\kappa$ controls the retention rate in units of standard deviations regardless of the absolute scale of $c_i$. Although introduced as a training-time gate, the same frozen estimator can be queried at inference to flag per-sample OOD inputs (\eg, MD frames drifting from the training manifold), a capability exploited in the Chignolin case study (Sec.~\ref{sec:case_study_chignolin}).
 
 \subsection{Adaptive Thresholding Mechanism}
 \label{sec:Adaptive_Thresholding}
