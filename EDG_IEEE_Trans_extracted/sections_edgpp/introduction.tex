@@ -22,12 +22,15 @@ The application of ED faces three major challenges:
 
 \textit{Challenge 3: Unreliable teacher predictions causing negative transfer.} Beyond feasibility and efficiency, a critical question remains: \emph{when should we trust the teacher's predictions?} The quality of cross-modal predictions varies across samples due to intrinsic DFT approximations, molecular conformation diversity, and information loss when compressing 3D electron clouds into 2D images. \emph{Naive distillation implicitly assumes uniform teacher fidelity, risking negative transfer}~\cite{pan2010survey}. To address this, we propose \textbf{EDG++}, a reliability-aware extension that introduces a pre-trained reliability estimator and an adaptive global-local thresholding mechanism for selective distillation, filtering unreliable teacher predictions before knowledge transfer (Section~\ref{sec:Theoretical_Analysis}--\ref{sec:Adaptive_Thresholding}).
 
+\textbf{Validation strategy.} We evaluate EDG++ along two complementary axes. Standard QM9 and rMD17 benchmarks measure breadth across properties, molecules, and student architectures. A targeted out-of-distribution case study on Chignolin then probes whether the negative-transfer failure mode our theory predicts truly manifests at scale, and whether the same gating component is reusable at inference. Together these two layers support claims about both consistent in-distribution gains and the design's behavior beyond its training envelope.
+
 We summarize the main contributions as follows:
 \begin{itemize}[itemsep=2pt,topsep=0pt,parsep=0pt]
     \item We propose EDG, an electron density distillation framework that injects electronic structure inductive bias into geometry-based models without adding inference cost, using electron density as privileged information available only during training.
     \item We design an efficient multi-view RGB-D image representation for electron density and develop ImageED, a masked autoencoder that learns ED-related features, along with an ED-aware teacher that transfers this knowledge without requiring ED at inference.
     \item We extend EDG to EDG++ by introducing a pre-trained reliability estimator and an adaptive thresholding mechanism combining global and local statistics, enabling selective distillation to mitigate negative transfer. We provide a theoretical analysis establishing a sufficient condition under which selective distillation reduces an upper bound on gradient noise, supported by empirical observation of heavy-tailed error structures.
-    \item We validate EDG++ across multiple architectures: SchNet, Equiformer, and SphereNet on QM9; and SchNet, SphereNet, and ViSNet on rMD17. The method achieves gains on 34/36 QM9 task-model combinations and 55/60 rMD17 energy and force predictions, and we further characterize the boundary conditions of the approach. As a smoking-gun stress test, we then demonstrate on a 166-atom mini-protein (Chignolin) substantially out of the ED teacher's training distribution that the failure mode predicted by our analysis truly manifests at scale and is recovered by EDG++'s gating (Sec.~\ref{sec:case_study_chignolin}).
+    \item We validate EDG++ on standard benchmarks across multiple architectures: SchNet, Equiformer, and SphereNet on QM9; SchNet, SphereNet, and ViSNet on rMD17. The method achieves gains on 34/36 QM9 task-model combinations and 55/60 rMD17 energy and force predictions, and we further characterize the boundary conditions of the approach.
+    \item We design a smoking-gun out-of-distribution case study on the 166-atom mini-protein Chignolin (Sec.~\ref{sec:case_study_chignolin}) that observes the predicted negative-transfer failure mode at scale and shows EDG++'s gating recovers from it. The same frozen reliability estimator additionally serves as an inference-time OOD detector during MD rollouts---promoting a training-time defense to a dual-use, first-class capability of the framework.
 \end{itemize}
 
 \textbf{Difference with Conference Version.} Table~\ref{tab:conf_vs_journal} summarizes the key differences between the IJCAI 2025 conference paper~\cite{xiang2025edg} (EDG) and this journal extension (EDG++).
@@ -45,8 +48,8 @@ We summarize the main contributions as follows:
     Reliability est. & -- & Pre-trained; \texttildelow131K params \\
     Thresholding & -- & Adaptive global-local \\
     Theory & -- & Prop.~1 (gradient noise) \\
-    QM9 models & SchNet, SphereNet & + Equiformer \\
-    rMD17 models & SchNet, ViSNet & + SphereNet (all EDG++) \\
+    Architecture coverage & EDG only & EDG++ across all three \\
+    & & students per benchmark \\
     Ablations & $\lambda$ only & $\beta$, $\kappa$, tail error, CV \\
     Analysis & Per-property & + property-type, architecture \\
     OOD validation & -- & Chignolin (166-atom protein) case study \\
