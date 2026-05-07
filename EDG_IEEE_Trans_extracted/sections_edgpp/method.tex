@@ -23,55 +23,27 @@ We propose \textbf{EDG} (\textbf{E}lectron \textbf{D}ensity-enhanced \textbf{G}e
 \subsection{Generation of RGB-D Electron Density Images}
 \label{sec:Generation_ED_Image}
 
-As shown in Fig.~\ref{Fig2_Method}(a), we first obtain 2 million molecular conformations from PCQM4Mv2~\cite{hu2021ogb} and use density functional theory (DFT) with the B3LYP exchange-correlation functional and the 6-31G(d,p) basis set for sulfur-free molecules, and 6-31+G(d,p) (with diffuse functions) for sulfur-containing molecules, to generate DFT data for these molecular conformations~\cite{turney2012psi4}. For each molecule, the DFT data includes an electrostatic potential (ESP) file and an ED file stored in the form of a three-dimensional grid.
+We adopt the multi-view RGB-D rendering protocol of EDG~\cite{xiang2025edg}, summarized here for self-containment. As shown in Fig.~\ref{Fig2_Method}(a), 2 million PCQM4Mv2~\cite{hu2021ogb} conformations are processed by DFT~\cite{turney2012psi4} to obtain ED and electrostatic potential (ESP) grids, then rendered via PyMol~\cite{delano2002pymol} into 6-view RGB-D images $\mathcal{U}\in\mathbb{R}^{6\times 4\times 224\times 224}$: RGB encodes the ESP via a red-white-blue colormap, and depth encodes spatial layout. Full DFT settings, PyMol commands, and viewpoint configurations are in Appendix~\ref{sec:appendix_pymol}.
 
-Using PyMol~\cite{delano2002pymol}, we jointly render the molecular structure and ED information into multi-view RGB-D images $\mathcal{U}\in\mathbb{R}^{6\times 4\times 224\times 224}$. The RGB channels encode the electrostatic potential distribution of the ED surface using a red-white-blue colormap (representing positive, neutral, and negative regions, respectively), while the depth channel captures the spatial layout. Images are rendered from 6 canonical viewpoints to approximate rotational coverage. The detailed rendering pipeline, including all PyMol commands and view configurations, is provided in Appendix~\ref{sec:appendix_pymol}.
-
-Compared to point cloud and voxel representations of ED, this image-based representation produces a fixed-size output tensor regardless of the source ED grid resolution, and compresses the continuous ED signal into a compact form. Empirically, it improves energy prediction by 38.4\%, GPU memory efficiency by 42.1\%, and training efficiency by 4.8\% compared to the best non-image alternatives.
+This image format produces a fixed-size output tensor regardless of source ED grid resolution and, in our prior work~\cite{xiang2025edg}, improved energy prediction by 38.4\%, GPU memory efficiency by 42.1\%, and training efficiency by 4.8\% over the best point-cloud / voxel alternatives on a 10K-molecule benchmark; per-task RMSE values are reproduced in Table~\ref{tab:results_ED_images} (Appendix~\ref{sec:appendix_ed_repr}). Qualitative ImageED reconstruction examples are provided in Appendix~\ref{sec:appendix_imageed_vis}.
 
 \subsection{ED Representation Learning with ImageED}
 \label{sec:ED_representation_learning}
 
-The ED images exhibit two properties suited to self-supervised learning: (1) RGB channels encode the ED distribution while the depth channel encodes spatial layout, giving each pixel a clear physical meaning; (2) ED is spatially continuous, so masked regions can be predicted from context. We exploit both properties in ImageED, an encoder-decoder framework built on ViT-Base/16~\cite{dosovitskiy2020image} from MAE~\cite{he2022masked}, with two complementary tasks---\emph{visible reconstruction} and \emph{masked reconstruction}---that capture local and contextual ED information from 2 million images.
+We train ImageED, the ED feature extractor used by the teacher in Section~\ref{sec:Pretraining_of_ED-aware_Teacher}, on the 2M ED images from Section~\ref{sec:Generation_ED_Image}. ImageED follows the ViT-Base/16~\cite{dosovitskiy2020image} masked-autoencoder backbone of EDG~\cite{xiang2025edg}: each multi-view ED image is patchified (patch size 16, $14\times 14$ grid per view, 25\% mask ratio), encoded by an ED encoder $f_{EDE}$ on visible tokens, and decoded by $f_{EDD}$ on the union of encoded and learnable mask tokens, yielding reconstructed unmasked / masked tokens $\hat{t}^u$ / $\hat{t}^m$.
 
-For a given batch ($B$ molecules) of ED images $u\in\mathbb{R}^{B\times N_v\times c\times H\times W}$ (where $N_v, c, H, W=6, 4, 224, 224$), we first use a view-agnostic patch embed layer with a patch size of $n_p=16$ to transform $u$ into a pile of multi-view tokens $mt$:
+Two complementary objectives capture local and contextual ED structure: \emph{visible reconstruction} on unmasked tokens (renamed from EDG's $\mathcal{L}_{MP}$ to $\mathcal{L}_{VR}$ for alignment with standard MAE terminology and to avoid notation conflict with the new selective-distillation \emph{mask} introduced in Section~\ref{sec:Adaptive_Thresholding}), and \emph{masked reconstruction} on masked tokens (the standard MAE objective~\cite{he2022masked}, renamed to $\mathcal{L}_{MR}$ for symmetry):
 \begin{align}
-\label{Formula_mt}
-mt_{i,j}=u\big[:, :, :,\; n_p \cdot i: n_p \cdot (i+1), \; n_p \cdot j: n_p \cdot (j+1)\big]
-\end{align}
-
-We define $n_t=H/n_p=W/n_p$ (= 14 for our setting) and $mt=\{mt_{i,j}|i, j\in\{0,\ldots,n_t{-}1\}\}\in\mathbb{R}^{B\times N_v\times n_t^2\times (n_p^2\times c)}$. Next, we add positional embeddings and expand along the view to get tokens $t\in\mathbb{R}^{B\times (N_v\times n_t^2)\times (n_p^2\times c)}$. We shuffle the token order and randomly mask 25\% to obtain masked tokens $t^m$ and unmasked tokens $t^u$.
-
-The unmasked tokens are input into the ED encoder $f_{EDE}$:
-\begin{align}
-\label{Formula_h_u}
-h^u=f_{EDE}(t^u), \quad h^u\in\mathbb{R}^{B\times(0.25 N_v n_t^2)\times d_{\mathcal{U}}}
-\end{align}
-where $d_{\mathcal{U}}$ is the encoder's latent dimension. We append learnable mask tokens $\hat{h}^{m}$ (initialized to zero) to obtain all tokens:
-\begin{align}
-\label{Formula_h}
-h=\pi(h^u\parallel\hat{h}^{m})+pos\in\mathbb{R}^{B\times(N_v n_t^2)\times d_{\mathcal{U}}}
-\end{align}
-where $\pi$ restores the original token order. The ED Decoder $f_{EDD}$ first projects $h$ from $d_{\mathcal{U}}$ to its own latent dimension and then maps back to the patch dimension $(n_p^2\times c)$, yielding predicted tokens $\hat{t}^m$ and $\hat{t}^u$.
-
-To optimize $f_{EDE}$ and $f_{EDD}$, we define a \emph{visible reconstruction} task $\mathcal{L}_{VR}$ that reconstructs the unmasked tokens as an auxiliary self-supervision signal:
-\begin{align}
-\label{Formula_L_MP}
-\mathcal{L}_{VR}=\frac{1}{B}\sum_{i=1}^B d(t^u_i, \hat{t}^u_i)
-\end{align}
-where $d(\cdot,\cdot)$ denotes the Euclidean distance. % [Polish] Original: We find that using only visible reconstruction limits the understanding of local features.
-Using visible reconstruction alone limits the learning of local features. We therefore add a \emph{masked reconstruction} task $\mathcal{L}_{MR}$ (the standard MAE objective~\cite{he2022masked}) that reconstructs the masked tokens:
-\begin{align}
-\label{Formula_L_RP}
+\label{Formula_L_VR}
+\mathcal{L}_{VR}=\frac{1}{B}\sum_{i=1}^B d(t^u_i, \hat{t}^u_i),\quad
 \mathcal{L}_{MR}=\frac{1}{B}\sum_{i=1}^B d(t^m_i, \hat{t}^m_i)
 \end{align}
-
-Finally, the overall loss function of ImageED is formulated:
+where $d(\cdot,\cdot)$ denotes Euclidean distance. The overall objective is
 \begin{align}
 \label{Formula_L_ImageED}
-\mathcal{L}_{ImageED}=\lambda_{VR}\mathcal{L}_{VR}+\lambda_{MR}\mathcal{L}_{MR}
+\mathcal{L}_{ImageED}=\lambda_{VR}\mathcal{L}_{VR}+\lambda_{MR}\mathcal{L}_{MR},\quad \lambda_{VR}=\lambda_{MR}=1,
 \end{align}
-where $\lambda_{VR}$ and $\lambda_{MR}$ are the balance coefficients and we set them to 1. After pre-training ImageED with 2 million molecules, we use the $f_{EDE}$ to extract ED features.
+following~\cite{xiang2025edg}. After pre-training with 2 million molecules, $f_{EDE}$ is frozen and used to extract ED features for downstream stages.
 
 \subsection{Pretraining of ED-aware Teacher}
 \label{sec:Pretraining_of_ED-aware_Teacher}
