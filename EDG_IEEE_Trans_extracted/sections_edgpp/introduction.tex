@@ -22,8 +22,6 @@ The application of ED faces three major challenges:
 
 \textit{Challenge 3: Unreliable teacher predictions causing negative transfer.} Beyond feasibility and efficiency, a critical question remains: \emph{when should we trust the teacher's predictions?} The quality of cross-modal predictions varies across samples due to intrinsic DFT approximations, molecular conformation diversity, and information loss when compressing 3D electron clouds into 2D images. \emph{Naive distillation implicitly assumes uniform teacher fidelity, risking negative transfer}~\cite{pan2010survey}. To address this, we propose \textbf{EDG++}, a reliability-aware extension that introduces a pre-trained reliability estimator and an adaptive global-local thresholding mechanism for selective distillation, filtering unreliable teacher predictions before knowledge transfer (Section~\ref{sec:Theoretical_Analysis}--\ref{sec:Adaptive_Thresholding}).
 
-\textbf{Validation strategy.} We evaluate EDG++ along two complementary axes. Standard QM9 and rMD17 benchmarks measure breadth across properties, molecules, and student architectures. A targeted out-of-distribution case study on Chignolin then probes whether the negative-transfer failure mode our theory predicts truly manifests at scale, and whether the same gating component is reusable at inference. Together these two layers support claims about both consistent in-distribution gains and the design's behavior beyond its training envelope.
-
 We summarize the main contributions as follows:
 \begin{itemize}[itemsep=2pt,topsep=0pt,parsep=0pt]
     \item We propose EDG, an electron density distillation framework that injects electronic structure inductive bias into geometry-based models without adding inference cost, using electron density as privileged information available only during training.
@@ -40,19 +38,20 @@ We summarize the main contributions as follows:
   \caption{Conference (IJCAI 2025) vs.\ journal extension.}
   \label{tab:conf_vs_journal}
   \scriptsize
-  \begin{tabular}{lcc}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}lcc@{}}
     \toprule
     \textbf{Aspect} & \textbf{Conference (EDG)} & \textbf{Journal (EDG++)} \\
     \midrule
     Distillation & Naive (all samples) & Selective (reliability-aware) \\
-    Reliability est. & -- & Pre-trained; \texttildelow131K params \\
+    Reliability est.\ & -- & Pre-trained; \texttildelow131K params \\
     Thresholding & -- & Adaptive global-local \\
     Theory & -- & Prop.~1 (gradient noise) \\
-    Architecture coverage & EDG only & EDG++ across all three \\
-    & & students per benchmark \\
+    Architecture cov.\ & EDG only & EDG++ on all three \\
+                       &          & students per benchmark \\
     Ablations & $\lambda$ only & $\beta$, $\kappa$, tail error, CV \\
-    Analysis & Per-property & + property-type, architecture \\
-    OOD validation & -- & Chignolin (166-atom protein) case study \\
+    Analysis & Per-property & {+}property-type, architecture \\
+    OOD case study & -- & Chignolin (166 atoms) \\
     \bottomrule
   \end{tabular}
 \end{table}

@@ -1,4 +1,10 @@
-\section{The Overall Process of EDG/EDG++}
+% ============================================================================
+% APPENDIX A: Method Details
+% ============================================================================
+\section{Method Details}
+\label{sec:appendix_method_details}
+
+\subsection{Overall Algorithm of EDG/EDG++}
 \label{sec:appendix_algorithm}
 
 In order to clearly describe the proposed EDG/EDG++ framework, we show the overall process in Algorithm~\ref{alg:edg_process}.
@@ -58,7 +64,7 @@ In order to clearly describe the proposed EDG/EDG++ framework, we show the overa
 \end{algorithm}
 
 
-\section{PyMol Rendering Pipeline}
+\subsection{PyMol Rendering Pipeline}
 \label{sec:appendix_pymol}
 
 This section provides the detailed PyMol~\cite{delano2002pymol} commands used for generating multi-view RGB-D electron density images.
@@ -72,7 +78,7 @@ This section provides the detailed PyMol~\cite{delano2002pymol} commands used fo
 \textbf{Structural Render.} The structural render uses the command template \textit{turn \{axis\}, \{angle\}; png \{path\}} in PyMol to render molecular structures from 2 million conformations into multi-view structural images $\mathcal{S}$. We generate 4 views with $(\{axis\}, \{angle\})$ set to $(x, 0), (x, 180), (y, 180), (z, 180)$.
 
 
-\section{Markov Assumption and Probability Derivation}
+\subsection{Markov Assumption and Probability Derivation}
 \label{sec:appendix_markov}
 
 We provide the full probability derivation for the ED-aware teacher. Let $s$, $x$, and $h$ denote the molecular conformation, DFT-computed ED data, and ED features, respectively. The acquisition of ED features follows the path $s\xrightarrow{\text{DFT}}x\xrightarrow{\text{ImageED}}h$.
@@ -90,9 +96,48 @@ p(h|s)=\int p(h|x)\cdot p(x|s) dx
 Since both stages of the pipeline are deterministic given their inputs---DFT maps $s$ to a unique $x$, and ImageED maps $x$ to a unique $h$---the conditional distributions collapse to point masses: $p(x|s)\approx\delta(x - \text{DFT}(s))$ and $p(h|x)\approx\delta(h - f_{EDE}(x))$. The integral therefore reduces to $p(h|s)\approx\delta(h - f_{EDE}(\text{DFT}(s)))$, which motivates directly learning the composite mapping $s\mapsto h$. The Markov assumption $p(h|x,s)=p(h|x)$ holds exactly when the ImageED encoder is a deterministic function of $x$ alone. In the context of molecular ED, this is well-motivated: under the Born-Oppenheimer approximation for ground-state systems with fixed composition, charge, and spin multiplicity, the Hohenberg-Kohn theorem~\cite{hohenberg1964inhomogeneous} guarantees that the nuclear geometry uniquely determines the electron density. However, two practical factors introduce residual dependence on $s$: (1) the DFT computation uses a finite basis set (6-31G(d,p)) and approximate exchange-correlation functional (B3LYP), and (2) the 6-view 2D projection introduces lossy compression of the 3D density field. We therefore treat this as an \emph{approximate} Markov assumption that serves as a practical modeling choice. Its adequacy is validated by the scale of pre-training (2 million molecules) and by the consistent downstream improvements across four architectures and two datasets.
 
 
-\section{Proof and Remarks for Proposition~\ref{prop:gradient_noise}}
+\subsection{ED Image Representation Comparison}
+\label{sec:appendix_ed_repr}
+
+\begin{table}[!htb]
+  \scriptsize
+  \centering
+  \caption{RMSE performance of different ED representations on 6 energy prediction tasks. Point cloud, voxel, and image use PointNet, ResNet3D, and ResNet18, respectively. E1--E6 represent DF-RKS Final Energy, Nuclear Repulsion Energy, One-Electron Energy, Two-Electron Energy, DFT Exchange-Correlation Energy, and Total Energy.}
+  \label{tab:results_ED_images}
+    \begin{tabular}{ccccccc}
+    \toprule
+    Repr. & E1 & E2 & E3 & E4 & E5 & E6 \\
+    \midrule
+    Point & 275.1 & 168.6 & 557.7 & 244.8 & 14.5 & 288.9 \\
+    Voxel & 121.1 & 313.9 & 947.8 & 271.2 & 7.9 & 202.0 \\
+    Image & \textbf{111.6} & \textbf{47.9} & \textbf{349.8} & \textbf{85.6} & \textbf{4.4} & \textbf{124.5} \\
+    \midrule
+    $\Delta$ & $\uparrow$7.8\% & $\uparrow$71.6\% & $\uparrow$37.3\% & $\uparrow$65.0\% & $\uparrow$44.5\% & $\uparrow$38.4\% \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\subsection{ImageED Reconstruction Visualization}
+\label{sec:appendix_imageed_vis}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{imgs_edgpp/experiments/ImageED_output.pdf}
+\caption{Visualization of ImageED reconstruction. ImageED generates high-quality ED images compared to the originals. Removing the masked reconstruction task ($\mathcal{L}_{MR}$) limits the understanding of local pixel-level features.}
+\label{fig:vis_ImageED}
+\end{figure}
+
+Figure~\ref{fig:vis_ImageED} shows the reconstruction quality of ImageED. ImageED can faithfully reconstruct ED images compared to the originals, indicating that it effectively learns ED-related knowledge from the multi-view RGB-D images. Removing the masked reconstruction task (ImageED w/o $\mathcal{L}_{MR}$) degrades the reconstruction of local pixel-level details, confirming the importance of both pretext tasks.
+
+
+% ============================================================================
+% APPENDIX B: Theoretical Analysis (Proof and Remarks)
+% ============================================================================
+\section{Theoretical Analysis: Proof and Remarks for Proposition~\ref{prop:gradient_noise}}
 \label{sec:appendix_proof}
 \label{sec:appendix_remarks}
+\label{sec:appendix_theory}
 
 \subsection{Proof of Proposition~\ref{prop:gradient_noise}}
 
@@ -134,8 +179,7 @@ Proposition~1 also explains the difficulty-dependent behavior observed in the ta
 
 The threshold form $\tau = \mu_c + \kappa \cdot \sigma_c$ is \emph{distribution-agnostic} in the sense that it defines a relative filtering strictness via empirical statistics regardless of the score distribution shape. When $\{c_i\}$ are approximately normally distributed, the retention rate admits a closed-form expression: denoting the standard normal CDF by $\Phi$, the fraction of retained samples is $1 - \Phi(\kappa) = \Phi(-\kappa)$ (by the symmetry of the Gaussian). However, normality is not required for the mechanism to be effective---$\kappa$ controls filtering in units of standard deviations for any distribution with finite variance, and Chebyshev's inequality guarantees that at most $1/\kappa^2$ of the population lies beyond $\kappa$ standard deviations from the mean. The hybrid threshold $\tau = \beta \cdot \tau_{local} + (1-\beta) \cdot \tau_{global}$ further addresses distributional non-stationarity: the global component provides stable, dataset-level calibration, while the local component adapts to batch-level distributional shifts during training.
 
-
-\section{Reliability-Aware and Selective Learning}
+\subsection{Related Work: Reliability-Aware and Selective Learning}
 \label{sec:appendix_selective_learning}
 
 The reliability-aware selection mechanism in EDG++ relates to several lines of research on selective and robust learning. Curriculum learning~\cite{bengio2009curriculum} and self-paced learning~\cite{kumar2010self} train models by presenting samples in a meaningful order, typically from easy to hard. MentorNet~\cite{jiang2018mentornet} learns a data-driven curriculum for training on corrupted labels. Co-teaching~\cite{han2018co} trains two networks simultaneously, with each network selecting small-loss samples for the other. More broadly, learning from noisy labels~\cite{song2022learning} encompasses a family of methods that identify and handle unreliable supervision signals.
@@ -143,24 +187,153 @@ The reliability-aware selection mechanism in EDG++ relates to several lines of r
 Our approach differs from these methods in a fundamental way: we estimate \emph{teacher reliability} rather than sample difficulty or label noise. In standard noisy label settings, the ground-truth labels are corrupted and the goal is to identify clean samples. In our setting, the ground-truth task labels are clean, but the auxiliary distillation signal from the teacher varies in quality across samples. This distinction motivates our design choice of a separately pre-trained reliability estimator that predicts the teacher's reconstruction error, combined with an adaptive thresholding mechanism that balances global consistency with local adaptivity. The confidence calibration literature~\cite{guo2017calibration} also informs our approach, as well-calibrated confidence scores are essential for effective threshold-based filtering.
 
 
-\section{Difficulty-Stratified Error Analysis}
-\label{sec:appendix_difficulty_stratification}
+% ============================================================================
+% APPENDIX C: Datasets, Implementation, and Hyperparameters
+% ============================================================================
+\section{Datasets, Implementation, and Hyperparameters}
+\label{sec:appendix_data_impl}
 
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=0.55\textwidth]{imgs_edgpp/experiments/difficulty_stratification_lines.pdf}
-\caption{Difficulty-stratified relative error change on QM9. All four tasks are plotted on a single panel; the y-axis shows the per-bin relative change in mean absolute error between the tuned-$\kappa$ and default-$\kappa$ configurations. Hard samples (P75--100) show consistent improvement of 25--38\%, while the crossover near P50--75 and the remarkably similar trajectories across architectures confirm that capacity reallocation is a general mechanism of adaptive thresholding. \textit{Note}: P0--25 values are truncated at the y-axis limit; actual relative degradation on easy samples ranges from +330\% to +374\%, but corresponds to negligible absolute error increases.}
-\label{fig:difficulty_stratification}
-\end{figure}
+\subsection{QM9 and rMD17 Dataset Descriptions}
+\label{sec:appendix_datasets}
 
-Figure~\ref{fig:difficulty_stratification} stratifies test samples into six difficulty percentiles and plots the relative per-bin error change for all four representative tasks. The picture is striking: every task traces a nearly identical monotonic descent from degradation on easy samples to improvement on hard samples, crossing zero near P50--75. In relative terms, easy samples (P0--25) suffer a large increase (+330--374\%), whereas hard samples (P95--100) achieve a 27--38\% reduction. Because the absolute errors of easy samples are near-zero under the default-threshold configuration, the large relative increase translates to a negligible absolute penalty; conversely, the moderate relative decrease on hard samples corresponds to a substantial absolute gain.
+\subsubsection{QM9 Dataset}
 
-This difficulty-dependent behavior is the intended mechanism of threshold tuning: by raising $\kappa$ beyond the default, EDG++ applies stricter filtering that suppresses potentially misleading ED signals on samples where the default-threshold model already performs well, reallocating model capacity to under-optimized hard samples. The remarkable consistency of this crossover pattern across three architectures and four quantum properties provides strong evidence that capacity reallocation is a general mechanism of adaptive thresholding.
+QM9~\cite{ramakrishnan2014quantum} is a widely used benchmark for quantum chemistry, containing 133,885 small organic molecules with up to 9 heavy atoms (C, N, O, F). Each molecule is associated with 12 quantum mechanical properties computed using density functional theory (DFT) at the B3LYP/6-31G(2df,p) level. Table~\ref{tab:qm9_properties} provides detailed descriptions of these properties.
 
-Robustness metrics further confirm variance reduction: standard deviation reductions of 5.3\% (SchNet-$R^2$), 16.6\% (Equiformer-$U_0$), 17.3\% (Equiformer-$G$), and 11.1\% (SphereNet-$H$). Maximum error reductions are pronounced for Equiformer: 39.1\% ($U_0$) and 37.9\% ($G$). For Equiformer-$U_0$, the maximum error decreases from 1.665 to 1.014, a 39\% reduction that substantially enhances reliability in practical applications.
+\begin{table}[!htb]
+  \centering
+  \caption{Descriptions of 12 quantum mechanical properties in QM9.}
+  \label{tab:qm9_properties}
+  \scriptsize
+    \begin{tabular}{clcc}
+    \toprule
+    \textbf{Property} & \textbf{Description} & \textbf{Unit} & \textbf{Type} \\
+    \midrule
+    $\alpha$ & Isotropic polarizability & $a_0^3$ & Electronic \\
+    $\Delta\varepsilon$ & HOMO-LUMO gap & meV & Electronic \\
+    $\varepsilon_{HOMO}$ & Highest occupied molecular orbital energy & meV & Electronic \\
+    $\varepsilon_{LUMO}$ & Lowest unoccupied molecular orbital energy & meV & Electronic \\
+    $\mu$ & Dipole moment & D & Electronic \\
+    $C_v$ & Heat capacity at 298.15K & $\frac{cal}{mol \cdot K}$ & Thermodynamic \\
+    $G$ & Free energy at 298.15K & meV & Thermodynamic \\
+    $H$ & Enthalpy at 298.15K & meV & Thermodynamic \\
+    $R^2$ & Electronic spatial extent & $a_0^2$ & Structural \\
+    $U$ & Internal energy at 298.15K & meV & Thermodynamic \\
+    $U_0$ & Internal energy at 0K & meV & Thermodynamic \\
+    ZPVE & Zero point vibrational energy & meV & Vibrational \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{rMD17 Dataset}
+
+The revised MD17 (rMD17)~\cite{christensen2020role} dataset contains molecular dynamics trajectories for 10 small organic molecules. Each trajectory consists of molecular conformations with corresponding energies and atomic forces computed at the PBE+vdW-TS level of theory. Table~\ref{tab:rmd17_molecules} provides detailed descriptions of these molecules.
+
+\begin{table}[!htb]
+  \centering
+  \caption{Descriptions of 10 molecules in rMD17.}
+  \label{tab:rmd17_molecules}
+  \scriptsize
+    \begin{tabular}{clccc}
+    \toprule
+    \textbf{No.} & \textbf{Molecule} & \textbf{Formula} & \textbf{\#Atoms} & \textbf{\#Conformations} \\
+    \midrule
+    1 & Aspirin & C$_9$H$_8$O$_4$ & 21 & 211,762 \\
+    2 & Azobenzene & C$_{12}$H$_{10}$N$_2$ & 24 & 99,999 \\
+    3 & Benzene & C$_6$H$_6$ & 12 & 627,983 \\
+    4 & Ethanol & C$_2$H$_6$O & 9 & 555,092 \\
+    5 & Malonaldehyde & C$_3$H$_4$O$_2$ & 9 & 993,237 \\
+    6 & Naphthalene & C$_{10}$H$_8$ & 18 & 326,250 \\
+    7 & Paracetamol & C$_8$H$_9$NO$_2$ & 20 & 106,490 \\
+    8 & Salicylic acid & C$_7$H$_6$O$_3$ & 16 & 320,231 \\
+    9 & Toluene & C$_7$H$_8$ & 15 & 442,790 \\
+    10 & Uracil & C$_4$H$_4$N$_2$O$_2$ & 12 & 133,770 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
 
 
-\section{Property-Type Grouped Analysis}
+\subsection{ImageED, Teacher, and Estimator Pre-training}
+\label{sec:appendix_implementation}
+
+\subsubsection{ImageED Pre-training}
+
+The encoder and decoder of ImageED are built based on ViT-Base/16~\cite{dosovitskiy2020image}. The encoder has an embedding dimension of 768 with 12 Transformer layers, and the decoder has an embedding dimension of 512 with 8 Transformer layers. We use a learning rate of 1.5e-4, a batch size of 64, a mask ratio of 0.25, $\lambda_{VR}=1$ and $\lambda_{MR}=1$ for 20 epochs on 8 GeForce RTX 4090 GPUs. The input ED images have shape $6 \times 4 \times 224 \times 224$ (6 views, 4 channels including RGB-D).
+
+\subsubsection{ED-aware Teacher Pre-training}
+
+We divide 2\% of the 2 million molecules as validation set and the rest as training set. The ED-aware teacher uses ResNet18~\cite{he2016deep} with view-wise average pooling. The ED predictor is a 2-layer MLP with Softplus activation. We use a learning rate of 5e-3 and a batch size of 128 to train for approximately 280k steps.
+
+\subsubsection{Reliability Estimator Training}
+
+The reliability estimator is a lightweight MLP with architecture: Linear(512, 256) $\rightarrow$ Softplus $\rightarrow$ Linear(256, 1), with approximately 131K parameters. It is jointly trained with the ED-aware teacher and ED predictor in Stage II, sharing the same SGD optimizer (momentum 0.9, learning rate 0.003, weight decay 1e-4, batch size 128, 25 epochs). Note that the evaluator's input features are detached from the teacher's computation graph to prevent gradient interference. The training objective is to predict the L2 reconstruction error between predicted and ground-truth ED features.
+
+\subsubsection{Downstream Task Training}
+
+For QM9, we use the dataset split from Geom3D~\cite{liu2024symmetry}: 110K for training, 10K for validation, and 11K for testing. For rMD17, we use 950 for training, 50 for validation, and 1000 for testing. The mapper $f_M$ and task predictor $f_T$ each consist of a single linear layer. We select the best checkpoint based on validation MAE for QM9 and validation force MAE for rMD17.
+
+
+\subsection{Hyperparameter Configurations and Search Space}
+\label{sec:appendix_hyperparam}
+\label{app:hyper}
+
+\textbf{Search space.} We conduct grid search over:
+\begin{itemize}[itemsep=2pt,topsep=2pt]
+    \item Distillation weight $\lambda \in \{0.01, 0.5, 1.0\}$ for QM9; $\lambda = 0.001$ for rMD17
+    \item Local threshold coefficient $\kappa_{batch} \in \{-1.5, 0, 1.5\}$
+    \item Global threshold coefficient $\kappa_{all} \in \{-1.5, 0, 1.5\}$ for QM9; $\{-1.5, -1, -0.5, 0, 0.5, 1.0, 1.5\}$ for rMD17
+    \item Mixing coefficient $\beta \in \{0, 0.5, 1.0\}$ for QM9; $\beta = 0$ for rMD17
+\end{itemize}
+For each task, we select the configuration that achieves the best validation performance.
+
+\textbf{rMD17 configuration rationale.} We report the default configuration used for the main results in Tables~\ref{tab:rmd17_energy} and~\ref{tab:rmd17_force}. On QM9, all three architectures share the same hyperparameter search. On rMD17, all experiments use global thresholding only ($\beta\!=\!0$), because rMD17 trains one model per molecule and every mini-batch is drawn from the conformation distribution of a single molecule; batch-local reliability statistics therefore converge to the global statistics in expectation, and per-batch variation becomes informative only in the multi-molecule QM9 setting (cf.\ Table~\ref{tab:ablation_beta}). An empirical validation of this choice on three representative rMD17 molecules is provided in Appendix~\ref{app:beta_rmd17}. SchNet and ViSNet on rMD17 use the out-of-the-box configuration ($\kappa_{all}\!=\!0$) to probe cross-architecture generality, whereas SphereNet additionally tunes $\kappa_{all}$ per molecule over $\{-1.5, -1, -0.5, 0, 0.5, 1.0, 1.5\}$ to characterize the upper bound of the approach. Per-molecule $\kappa_{all}$ tuning is restricted to SphereNet because the 50-sample rMD17 validation set limits the reliability of such tuning for additional architectures.
+
+
+\subsection{Empirical Validation of $\beta\!=\!0$ on rMD17}
+\label{app:beta_rmd17}
+
+To validate our default choice of $\beta\!=\!0$ (global-only thresholding) for rMD17, we run a $\beta$ ablation on three representative molecules---Aspirin (large, complex), Salicylic acid (mid-size with hydroxyl groups), and Toluene (small, aromatic)---using SphereNet with $\kappa_{all}\!=\!0$ and $\lambda\!=\!0.001$. Each molecule is trained for 1{,}000 epochs at three values of $\beta\in\{0, 0.5, 1.0\}$. Table~\ref{tab:rmd17_beta_ablation} reports the test-set MAE.
+
+\begin{table}[!htb]
+  \scriptsize
+  \centering
+  \caption{rMD17 $\beta$ ablation on SphereNet ($\kappa_{all}\!=\!0$, $\lambda\!=\!0.001$, 1{,}000 epochs). On the average across three molecules, $\beta\!=\!0$ minimizes Energy MAE while Force MAE is essentially insensitive to $\beta$. On per-molecule basis, $\beta\!=\!0$ is best on Energy for 2/3 molecules with the largest gaps appearing on the more complex molecules (Aspirin and Salicylic). Bold indicates the best result per row.}
+  \label{tab:rmd17_beta_ablation}
+    \begin{tabular}{lccc}
+    \toprule
+    \textbf{Molecule} & $\beta\!=\!0$ & $\beta\!=\!0.5$ & $\beta\!=\!1.0$ \\
+    \midrule
+    \multicolumn{4}{l}{\textit{Energy MAE ($\frac{kcal}{mol}$)}} \\
+    Aspirin       & \textbf{0.12406} & 0.18744 & 0.22103 \\
+    Salicylic     & \textbf{0.06603} & 0.06894 & 0.09613 \\
+    Toluene       & 0.02366 & 0.02252 & \textbf{0.02161} \\
+    \emph{Average} & \textbf{0.07125} & 0.09297 & 0.11292 \\
+    \midrule
+    \multicolumn{4}{l}{\textit{Force MAE ($\frac{kcal}{mol\cdot \text{\r{A}}}$)}} \\
+    Aspirin       & \textbf{0.38060} & 0.38130 & 0.38529 \\
+    Salicylic     & 0.29756 & \textbf{0.29563} & 0.30040 \\
+    Toluene       & 0.10518 & \textbf{0.10428} & 0.10462 \\
+    \emph{Average} & 0.26111 & \textbf{0.26040} & 0.26344 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+The aggregate picture supports $\beta\!=\!0$ as the default for rMD17. On Energy MAE, $\beta\!=\!0$ achieves the lowest average error (0.07125 vs.\ 0.09297 for $\beta\!=\!0.5$ and 0.11292 for $\beta\!=\!1$); the gap is largest on the more complex molecules (Aspirin: 51\% lower than $\beta\!=\!0.5$; Salicylic: 4\% lower) and reverses only on Toluene with a small margin (9\% vs.\ $\beta\!=\!1$). On Force MAE, all three $\beta$ values perform within 1\% of each other (the average MAE differs by less than 0.003), reflecting that force prediction is dominated by local atomic interactions rather than the global energy distribution captured by ED. This empirical pattern matches the theoretical motivation in Appendix~\ref{app:hyper}: under per-molecule training, batch-local reliability statistics are noisy estimates of the same global distribution, and the small batch size in rMD17 (4 to 128 conformations of a single molecule) further amplifies noise; pure global thresholding ($\beta\!=\!0$) avoids this noise without losing distributional information.
+
+
+\subsection{Computational Cost Analysis}
+\label{sec:appendix_cost}
+
+EDG++ introduces no additional parameters or forward passes beyond EDG; the only overhead is a scalar reliability score lookup per sample, resulting in $<$5\% per-epoch overhead compared to the no-distillation baseline. All experiments were conducted on 8$\times$ NVIDIA H200 GPUs. On QM9, a single distillation run takes $\sim$18h (SchNet, 1000 epochs), $\sim$35h (SphereNet, 1000 epochs), or $\sim$40h (Equiformer, 300 epochs). The dominant cost is the grid search: each model requires 45 configurations (3 $\lambda$ values $\times$ 15 $(\kappa, \beta)$ combinations) per task, totaling $\sim$9.6k, $\sim$19.0k, and $\sim$21.3k GPU-hours for SchNet, SphereNet, and Equiformer, respectively. On rMD17, SphereNet requires 7 $\kappa_{all}$ values per molecule ($\sim$46h per run), totaling $\sim$3.1k GPU-hours. In practice, the search can be substantially reduced by first identifying a good $\lambda$ on a representative task and then only searching over $(\kappa, \beta)$, which would reduce the search space by 3$\times$.
+
+
+% ============================================================================
+% APPENDIX D: Additional Results and Visualizations
+% ============================================================================
+\section{Additional Results and Visualizations}
+\label{sec:appendix_results}
+
+\subsection{Property-Type Grouped Analysis}
 \label{sec:appendix_property_group}
 
 Table~\ref{tab:property_group} provides a detailed property-type grouped analysis of EDG++ improvements.
@@ -187,7 +360,41 @@ Table~\ref{tab:property_group} provides a detailed property-type grouped analysi
 \end{table}
 
 
-\section{Distillation Weight Sensitivity}
+\subsection{rMD17 Prediction Error Visualization}
+\label{sec:appendix_rmd17_vis}
+
+\begin{figure*}[!htb]
+\centering
+\includegraphics[width=\textwidth]{imgs_edgpp/experiments/rMD17_baseline_vs_edgpp.pdf}
+\caption{Per-sample energy prediction errors on rMD17 (SphereNet), comparing the no-distillation baseline with EDG++ ($\kappa_{all}\!=\!1.5$ for naphthalene and uracil; $\kappa_{all}\!=\!1.0$ for malonaldehyde). We include three representative cases: two successes---naphthalene ($\Delta\!=\!+74.9\%$) and uracil ($\Delta\!=\!+60.4\%$)---and the identified boundary case, malonaldehyde ($\Delta\!=\!-0.2\%$), discussed in Appendix~\ref{app:boundary}, where the reliability estimator fails to filter beneficial distillation signal due to the molecule's rapid intramolecular proton-transfer dynamics. \textit{Note}: $\Delta$ values are computed from per-sample predictions of independently trained baseline and EDG++ models, not from the conference-version baselines in Tables~\ref{tab:rmd17_energy}--\ref{tab:rmd17_force}.}
+\label{fig:rMD17_vis}
+\end{figure*}
+
+
+% ============================================================================
+% APPENDIX E: Robustness and Ablation Analyses
+% ============================================================================
+\section{Robustness and Ablation Analyses}
+\label{sec:appendix_robustness}
+
+\subsection{Difficulty-Stratified Error Analysis}
+\label{sec:appendix_difficulty_stratification}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.55\textwidth]{imgs_edgpp/experiments/difficulty_stratification_lines.pdf}
+\caption{Difficulty-stratified relative error change on QM9. All four tasks are plotted on a single panel; the y-axis shows the per-bin relative change in mean absolute error between the tuned-$\kappa$ and default-$\kappa$ configurations. Hard samples (P75--100) show consistent improvement of 25--38\%, while the crossover near P50--75 and the remarkably similar trajectories across architectures confirm that capacity reallocation is a general mechanism of adaptive thresholding. \textit{Note}: P0--25 values are truncated at the y-axis limit; actual relative degradation on easy samples ranges from +330\% to +374\%, but corresponds to negligible absolute error increases.}
+\label{fig:difficulty_stratification}
+\end{figure}
+
+Figure~\ref{fig:difficulty_stratification} stratifies test samples into six difficulty percentiles and plots the relative per-bin error change for all four representative tasks. The picture is striking: every task traces a nearly identical monotonic descent from degradation on easy samples to improvement on hard samples, crossing zero near P50--75. In relative terms, easy samples (P0--25) suffer a large increase (+330--374\%), whereas hard samples (P95--100) achieve a 27--38\% reduction. Because the absolute errors of easy samples are near-zero under the default-threshold configuration, the large relative increase translates to a negligible absolute penalty; conversely, the moderate relative decrease on hard samples corresponds to a substantial absolute gain.
+
+This difficulty-dependent behavior is the intended mechanism of threshold tuning: by raising $\kappa$ beyond the default, EDG++ applies stricter filtering that suppresses potentially misleading ED signals on samples where the default-threshold model already performs well, reallocating model capacity to under-optimized hard samples. The remarkable consistency of this crossover pattern across three architectures and four quantum properties provides strong evidence that capacity reallocation is a general mechanism of adaptive thresholding.
+
+Robustness metrics further confirm variance reduction: standard deviation reductions of 5.3\% (SchNet-$R^2$), 16.6\% (Equiformer-$U_0$), 17.3\% (Equiformer-$G$), and 11.1\% (SphereNet-$H$). Maximum error reductions are pronounced for Equiformer: 39.1\% ($U_0$) and 37.9\% ($G$). For Equiformer-$U_0$, the maximum error decreases from 1.665 to 1.014, a 39\% reduction that substantially enhances reliability in practical applications.
+
+
+\subsection{Distillation Weight Sensitivity}
 \label{sec:appendix_lambda}
 
 Table~\ref{tab:lambda_sensitivity} reports the per-task $\lambda$ sensitivity under the default-threshold configuration.
@@ -220,45 +427,22 @@ Table~\ref{tab:lambda_sensitivity} reports the per-task $\lambda$ sensitivity un
 \end{table}
 
 
-\section{Hyperparameter Configurations for EDG and EDG++}
-\label{app:hyper}
+\subsection{Hyperparameter Interaction Analysis}
+\label{sec:appendix_heatmap}
 
-We report the default configuration used for the main results in Tables~\ref{tab:rmd17_energy} and~\ref{tab:rmd17_force}, and the full search space in Appendix~\ref{sec:appendix_hyperparam}. On QM9, all three architectures share the same hyperparameter search. On rMD17, all experiments use global thresholding only ($\beta\!=\!0$), because rMD17 trains one model per molecule and every mini-batch is drawn from the conformation distribution of a single molecule; batch-local reliability statistics therefore converge to the global statistics in expectation, and per-batch variation becomes informative only in the multi-molecule QM9 setting (cf.\ Table~\ref{tab:ablation_beta}). An empirical validation of this choice on three representative rMD17 molecules is provided in Appendix~\ref{app:beta_rmd17}. SchNet and ViSNet on rMD17 use the out-of-the-box configuration ($\kappa_{all}\!=\!0$) to probe cross-architecture generality, whereas SphereNet additionally tunes $\kappa_{all}$ per molecule over $\{-1.5, -1, -0.5, 0, 0.5, 1.0, 1.5\}$ to characterize the upper bound of the approach. Per-molecule $\kappa_{all}$ tuning is restricted to SphereNet because the 50-sample rMD17 validation set limits the reliability of such tuning for additional architectures.
+\begin{figure*}[!htb]
+\centering
+\includegraphics[width=\textwidth]{imgs_edgpp/experiments/heatmap_hyperparam.pdf}
+\caption{Relative improvement (\%) over the no-distillation baseline as a function of $\kappa_{batch}$ and $\kappa_{all}$ with $\beta=0.5$ on QM9. For each ($\kappa_{batch}$, $\kappa_{all}$) pair, we report the best result across all $\lambda$ values. Blue indicates improvement; red indicates degradation; white corresponds to no change. Bold values denote $|\Delta|>5\%$. \textit{Note}: color scales are independently normalized per panel to maximize contrast within each task-model combination.}
+\label{fig:heatmap_hyperparam}
+\end{figure*}
 
+Figure~\ref{fig:heatmap_hyperparam} visualizes the relative improvement over the baseline as a function of $\kappa_{batch}$ and $\kappa_{all}$ under the hybrid strategy ($\beta=0.5$) for four representative tasks. Two observations emerge. First, the improvement landscape is generally smooth, with most cells showing positive gains, indicating that EDG++ is robust to the specific choice of $\kappa$ values. Second, the optimal region varies by task and model: for SchNet, the improvements are uniformly distributed (all cells within 1\% of each other), while for SphereNet, thermodynamic properties like $G$ show more pronounced sensitivity to $\kappa_{all}$, with stricter filtering ($\kappa_{all}=1.5$) yielding larger gains.
 
-\section{Empirical Validation of $\beta\!=\!0$ on rMD17}
-\label{app:beta_rmd17}
-
-To validate our default choice of $\beta\!=\!0$ (global-only thresholding) for rMD17, we run a $\beta$ ablation on three representative molecules---Aspirin (large, complex), Salicylic acid (mid-size with hydroxyl groups), and Toluene (small, aromatic)---using SphereNet with $\kappa_{all}\!=\!0$ and $\lambda\!=\!0.001$. Each molecule is trained for 1{,}000 epochs at three values of $\beta\in\{0, 0.5, 1.0\}$. Table~\ref{tab:rmd17_beta_ablation} reports the test-set MAE.
-
-\begin{table}[!htb]
-  \scriptsize
-  \centering
-  \caption{rMD17 $\beta$ ablation on SphereNet ($\kappa_{all}\!=\!0$, $\lambda\!=\!0.001$, 1{,}000 epochs). On the average across three molecules, $\beta\!=\!0$ minimizes Energy MAE while Force MAE is essentially insensitive to $\beta$. On per-molecule basis, $\beta\!=\!0$ is best on Energy for 2/3 molecules with the largest gaps appearing on the more complex molecules (Aspirin and Salicylic). Bold indicates the best result per row.}
-  \label{tab:rmd17_beta_ablation}
-    \begin{tabular}{lccc}
-    \toprule
-    \textbf{Molecule} & $\beta\!=\!0$ & $\beta\!=\!0.5$ & $\beta\!=\!1.0$ \\
-    \midrule
-    \multicolumn{4}{l}{\textit{Energy MAE ($\frac{kcal}{mol}$)}} \\
-    Aspirin       & \textbf{0.12406} & 0.18744 & 0.22103 \\
-    Salicylic     & \textbf{0.06603} & 0.06894 & 0.09613 \\
-    Toluene       & 0.02366 & 0.02252 & \textbf{0.02161} \\
-    \emph{Average} & \textbf{0.07125} & 0.09297 & 0.11292 \\
-    \midrule
-    \multicolumn{4}{l}{\textit{Force MAE ($\frac{kcal}{mol\cdot \text{\r{A}}}$)}} \\
-    Aspirin       & \textbf{0.38060} & 0.38130 & 0.38529 \\
-    Salicylic     & 0.29756 & \textbf{0.29563} & 0.30040 \\
-    Toluene       & 0.10518 & \textbf{0.10428} & 0.10462 \\
-    \emph{Average} & 0.26111 & \textbf{0.26040} & 0.26344 \\
-    \bottomrule
-    \end{tabular}
-\end{table}
-
-The aggregate picture supports $\beta\!=\!0$ as the default for rMD17. On Energy MAE, $\beta\!=\!0$ achieves the lowest average error (0.07125 vs.\ 0.09297 for $\beta\!=\!0.5$ and 0.11292 for $\beta\!=\!1$); the gap is largest on the more complex molecules (Aspirin: 51\% lower than $\beta\!=\!0.5$; Salicylic: 4\% lower) and reverses only on Toluene with a small margin (9\% vs.\ $\beta\!=\!1$). On Force MAE, all three $\beta$ values perform within 1\% of each other (the average MAE differs by less than 0.003), reflecting that force prediction is dominated by local atomic interactions rather than the global energy distribution captured by ED. This empirical pattern matches the theoretical motivation in Appendix~\ref{app:hyper}: under per-molecule training, batch-local reliability statistics are noisy estimates of the same global distribution, and the small batch size in rMD17 (4 to 128 conformations of a single molecule) further amplifies noise; pure global thresholding ($\beta\!=\!0$) avoids this noise without losing distributional information.
+\textbf{Threshold sensitivity on rMD17.} We further analyze how $\kappa_{all}$ affects energy prediction on rMD17 (SphereNet, $\lambda\!=\!0.001$). The sensitivity patterns are highly molecule-dependent: aspirin and toluene favor negative $\kappa_{all}$ (more inclusive filtering), while naphthalene and uracil favor positive $\kappa_{all}$ (stricter filtering). Malonaldehyde is the most extreme case, with energy improvement fluctuating between $-260\%$ and $+10\%$ across $\kappa_{all} \in [-1.5, 1.5]$, consistent with its challenging proton transfer dynamics. Force predictions are relatively insensitive to $\kappa_{all}$ across all molecules, suggesting that the ED teacher primarily provides global energy-level information rather than local force-level gradients.
 
 
-\section{Progressive Component Ablation (SphereNet, rMD17)}
+\subsection{Progressive Component Ablation (SphereNet, rMD17)}
 \label{app:progressive}
 
 To isolate the contribution of the reliability estimator from that of the distillation weight and threshold tuning, we report a progressive-ablation study on SphereNet, the only rMD17 architecture for which the full configuration chain---EDG with tuned $\lambda$, EDG with fixed $\lambda\!=\!0.001$, EDG++ at $\kappa_{all}\!=\!0$, and EDG++ with tuned $\kappa_{all}$---is available. Table~\ref{tab:rmd17_progressive} reports MAE for each configuration.
@@ -291,156 +475,13 @@ To isolate the contribution of the reliability estimator from that of the distil
 Comparing EDG ($\lambda\!=\!0.001$) to EDG++ ($\kappa\!=\!0$), which differ only in whether the reliability estimator is active, the estimator improves energy on 8/10 molecules, with naphthalene ($\downarrow$54.5\%), salicylic acid ($\downarrow$32.4\%), and aspirin ($\downarrow$30.7\%) showing the largest gains. Naive distillation at $\lambda\!=\!0.001$ without the estimator degrades energy below baseline on 4/10 molecules (e.g., naphthalene: $\uparrow$36.4\%); the estimator recovers 3 of these 4 cases to below-baseline error, indicating that reliability-aware filtering is essential for safe distillation at this weight. Threshold tuning (EDG++ $\kappa\!=\!0 \to$ EDG++ with tuned $\kappa$) provides further incremental gains.
 
 
-\section{Boundary Case Analysis: Malonaldehyde}
+\subsection{Boundary Case Analysis: Malonaldehyde}
 \label{app:boundary}
 
 Malonaldehyde is the only molecule where the reliability estimator consistently degrades performance on rMD17. Naive distillation at $\lambda\!=\!0.001$ improves energy (0.05806 vs.\ baseline 0.06005, $\downarrow$3.3\%), indicating that the ED-based distillation signal is beneficial for this molecule. Activating the estimator (EDG++ $\kappa\!=\!0$: 0.06767) reverses this gain, suggesting that the estimator incorrectly filters beneficial distillation signal, likely because the rapid intramolecular proton-transfer dynamics of malonaldehyde produce ED patterns that the estimator misclassifies as unreliable. EDG with per-task-best $\lambda$ achieves the best result (0.05659), and threshold tuning partially mitigates the degradation (EDG++ best $\kappa$: 0.06611 versus 0.06767 at $\kappa\!=\!0$), pointing to molecule-adaptive thresholding as a future direction. A per-sample error visualization for malonaldehyde together with two representative success cases (naphthalene, uracil) is given in Appendix~\ref{sec:appendix_rmd17_vis}.
 
 
-\section{rMD17 Prediction Error Visualization}
-\label{sec:appendix_rmd17_vis}
-
-\begin{figure*}[!htb]
-\centering
-\includegraphics[width=\textwidth]{imgs_edgpp/experiments/rMD17_baseline_vs_edgpp.pdf}
-\caption{Per-sample energy prediction errors on rMD17 (SphereNet), comparing the no-distillation baseline with EDG++ ($\kappa_{all}\!=\!1.5$ for naphthalene and uracil; $\kappa_{all}\!=\!1.0$ for malonaldehyde). We include three representative cases: two successes---naphthalene ($\Delta\!=\!+74.9\%$) and uracil ($\Delta\!=\!+60.4\%$)---and the identified boundary case, malonaldehyde ($\Delta\!=\!-0.2\%$), discussed in Appendix~\ref{app:boundary}, where the reliability estimator fails to filter beneficial distillation signal due to the molecule's rapid intramolecular proton-transfer dynamics. \textit{Note}: $\Delta$ values are computed from per-sample predictions of independently trained baseline and EDG++ models, not from the conference-version baselines in Tables~\ref{tab:rmd17_energy}--\ref{tab:rmd17_force}.}
-\label{fig:rMD17_vis}
-\end{figure*}
-
-
-\section{Hyperparameter Interaction Analysis}
-\label{sec:appendix_heatmap}
-
-\begin{figure*}[!htb]
-\centering
-\includegraphics[width=\textwidth]{imgs_edgpp/experiments/heatmap_hyperparam.pdf}
-\caption{Relative improvement (\%) over the no-distillation baseline as a function of $\kappa_{batch}$ and $\kappa_{all}$ with $\beta=0.5$ on QM9. For each ($\kappa_{batch}$, $\kappa_{all}$) pair, we report the best result across all $\lambda$ values. Blue indicates improvement; red indicates degradation; white corresponds to no change. Bold values denote $|\Delta|>5\%$. \textit{Note}: color scales are independently normalized per panel to maximize contrast within each task-model combination.}
-\label{fig:heatmap_hyperparam}
-\end{figure*}
-
-Figure~\ref{fig:heatmap_hyperparam} visualizes the relative improvement over the baseline as a function of $\kappa_{batch}$ and $\kappa_{all}$ under the hybrid strategy ($\beta=0.5$) for four representative tasks. Two observations emerge. First, the improvement landscape is generally smooth, with most cells showing positive gains, indicating that EDG++ is robust to the specific choice of $\kappa$ values. Second, the optimal region varies by task and model: for SchNet, the improvements are uniformly distributed (all cells within 1\% of each other), while for SphereNet, thermodynamic properties like $G$ show more pronounced sensitivity to $\kappa_{all}$, with stricter filtering ($\kappa_{all}=1.5$) yielding larger gains.
-
-\textbf{Threshold sensitivity on rMD17.} We further analyze how $\kappa_{all}$ affects energy prediction on rMD17 (SphereNet, $\lambda\!=\!0.001$). The sensitivity patterns are highly molecule-dependent: aspirin and toluene favor negative $\kappa_{all}$ (more inclusive filtering), while naphthalene and uracil favor positive $\kappa_{all}$ (stricter filtering). Malonaldehyde is the most extreme case, with energy improvement fluctuating between $-260\%$ and $+10\%$ across $\kappa_{all} \in [-1.5, 1.5]$, consistent with its challenging proton transfer dynamics. Force predictions are relatively insensitive to $\kappa_{all}$ across all molecules, suggesting that the ED teacher primarily provides global energy-level information rather than local force-level gradients.
-
-
-\section{ImageED Reconstruction Visualization}
-\label{sec:appendix_imageed_vis}
-
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=\columnwidth]{imgs_edgpp/experiments/ImageED_output.pdf}
-\caption{Visualization of ImageED reconstruction. ImageED generates high-quality ED images compared to the originals. Removing the masked reconstruction task ($\mathcal{L}_{MR}$) limits the understanding of local pixel-level features.}
-\label{fig:vis_ImageED}
-\end{figure}
-
-Figure~\ref{fig:vis_ImageED} shows the reconstruction quality of ImageED. ImageED can faithfully reconstruct ED images compared to the originals, indicating that it effectively learns ED-related knowledge from the multi-view RGB-D images. Removing the masked reconstruction task (ImageED w/o $\mathcal{L}_{MR}$) degrades the reconstruction of local pixel-level details, confirming the importance of both pretext tasks.
-
-
-\section{ED Image Representation Comparison}
-\label{sec:appendix_ed_repr}
-
-\begin{table}[!htb]
-  \scriptsize
-  \centering
-  \caption{RMSE performance of different ED representations on 6 energy prediction tasks. Point cloud, voxel, and image use PointNet, ResNet3D, and ResNet18, respectively. E1--E6 represent DF-RKS Final Energy, Nuclear Repulsion Energy, One-Electron Energy, Two-Electron Energy, DFT Exchange-Correlation Energy, and Total Energy.}
-  \label{tab:results_ED_images}
-    \begin{tabular}{ccccccc}
-    \toprule
-    Repr. & E1 & E2 & E3 & E4 & E5 & E6 \\
-    \midrule
-    Point & 275.1 & 168.6 & 557.7 & 244.8 & 14.5 & 288.9 \\
-    Voxel & 121.1 & 313.9 & 947.8 & 271.2 & 7.9 & 202.0 \\
-    Image & \textbf{111.6} & \textbf{47.9} & \textbf{349.8} & \textbf{85.6} & \textbf{4.4} & \textbf{124.5} \\
-    \midrule
-    $\Delta$ & $\uparrow$7.8\% & $\uparrow$71.6\% & $\uparrow$37.3\% & $\uparrow$65.0\% & $\uparrow$44.5\% & $\uparrow$38.4\% \\
-    \bottomrule
-    \end{tabular}
-\end{table}
-
-
-\section{Computational Cost Analysis}
-\label{sec:appendix_cost}
-
-EDG++ introduces no additional parameters or forward passes beyond EDG; the only overhead is a scalar reliability score lookup per sample, resulting in $<$5\% per-epoch overhead compared to the no-distillation baseline. All experiments were conducted on 8$\times$ NVIDIA H200 GPUs. On QM9, a single distillation run takes $\sim$18h (SchNet, 1000 epochs), $\sim$35h (SphereNet, 1000 epochs), or $\sim$40h (Equiformer, 300 epochs). The dominant cost is the grid search: each model requires 45 configurations (3 $\lambda$ values $\times$ 15 $(\kappa, \beta)$ combinations) per task, totaling $\sim$9.6k, $\sim$19.0k, and $\sim$21.3k GPU-hours for SchNet, SphereNet, and Equiformer, respectively. On rMD17, SphereNet requires 7 $\kappa_{all}$ values per molecule ($\sim$46h per run), totaling $\sim$3.1k GPU-hours. In practice, the search can be substantially reduced by first identifying a good $\lambda$ on a representative task and then only searching over $(\kappa, \beta)$, which would reduce the search space by 3$\times$.
-
-
-\section{Attribution of Gains to the Electron Density Signal}
-\label{sec:appendix_contribution}
-
-A natural question is whether the observed improvements stem from the ED signal itself, or from generic effects of cross-modal knowledge distillation (additional regularization, auxiliary teacher capacity, multi-modal inductive bias). Our experimental design provides a natural two-level decomposition: Baseline $\to$ EDG isolates the contribution of ED as privileged information, and EDG $\to$ EDG++ isolates the contribution of reliability-aware selective distillation. The first level---attributing the Baseline $\to$ EDG gap to the ED signal---is supported by three lines of converging evidence. We then explain why a ``non-ED teacher'' replacement control would not provide a neutral counterfactual.
-
-\textbf{Evidence 1: Improvement hierarchy follows the Hohenberg--Kohn theorem.} The gains are not uniform across property types: thermodynamic properties improve most consistently (5/5 win rate, $+3.7$\% to $+16.3$\%), followed by electronic and then vibrational properties (Section~\ref{sec:Experiments}, Fig.~\ref{fig:property_group}). Under the Hohenberg--Kohn theorem~\cite{hohenberg1964inhomogeneous}, ground-state thermodynamic observables are unique functionals of the electron density, so a teacher that genuinely transfers ED-related information should show exactly this hierarchy. A generic cross-modal teacher with no ED grounding has no a priori reason to favor thermodynamic over vibrational properties.
-
-\textbf{Evidence 2: Cross-architecture consistency.} The same teacher and reliability estimator yield gains on four structurally different students (SchNet, Equiformer, SphereNet, ViSNet) and on two task families (QM9 properties, rMD17 energies/forces). If the gains were artifacts of teacher capacity or KD-induced regularization, we would expect them to vary substantially with student inductive bias. Architecture-agnostic improvement is more consistent with a transferred physical signal than with an architecture-specific regularization effect.
-
-\textbf{Evidence 3: Reliability estimator validates the ED-error proxy.} The estimator $\phi_{eval}$ is trained \emph{only} to predict the L2 reconstruction error between teacher-predicted and ImageED-extracted ED features---it never sees task labels. The fact that filtering by this purely-ED-derived score systematically improves downstream task performance (27/36 to 31/36 tasks across architectures, Table~\ref{tab:incremental}) implies that ED reconstruction quality is causally linked to distillation utility. This linkage would not exist if gains were unrelated to ED fidelity.
-
-\textbf{Why a non-ED teacher control is not the right counterfactual.} A natural-seeming ablation would replace the ED-aware teacher with a non-ED teacher of identical architecture. We argue that no such replacement is neutral: (a)~an ImageNet-pretrained backbone has no molecular semantics, so any negative result trivially confirms the obvious; (b)~a structural-image teacher trained with a self-supervised objective such as contrastive pretraining introduces a different representation-learning pretext as a new confound; (c)~a teacher trained with task supervision conflates ``ED vs.~no~ED'' with ``self-supervised vs.~supervised''. Each candidate isolates a different variable, and none isolates ``ED signal'' alone. This is consistent with practice in cross-modal molecular distillation: prior privileged-information and image-modality work for molecular property prediction~\cite{xiang2024iem,zeng2022accurate,sunshine2023chemical} attributes gains to the privileged signal through component, scale, or input-level ablations rather than through teacher replacement; analogously, recent cross-modal denoising-distillation work~\cite{cho2025denoisers} grounds its attribution in the theoretical link between denoising and force-field learning~\cite{zaidi2022pretraining} rather than in a counterfactual teacher swap.
-
-\textbf{Field-standard input-level attribution.} The cross-modal KD literature standardly attributes signal contribution at the \emph{input} level (channel ablation, modality removal, input corruption) rather than at the teacher-replacement level. We note this as the appropriate direction for further attribution analysis: an RGB-vs-D channel ablation on the ImageED teacher input would directly isolate the contribution of the depth (electron-cloud spatial) channel from the RGB (electrostatic potential) channel, with the rest of the pipeline held fixed. We leave a full channel-level ablation to future work, but the three lines of evidence above already constrain the attribution: the Hohenberg--Kohn-aligned hierarchy, the architecture-agnostic transfer, and the ED-error-trained estimator's empirical validity each independently require the gains to be ED-mediated rather than artifacts of generic cross-modal regularization.
-
-
-\section{Dataset Descriptions}
-\label{sec:appendix_datasets}
-
-\subsection{QM9 Dataset}
-
-QM9~\cite{ramakrishnan2014quantum} is a widely used benchmark for quantum chemistry, containing 133,885 small organic molecules with up to 9 heavy atoms (C, N, O, F). Each molecule is associated with 12 quantum mechanical properties computed using density functional theory (DFT) at the B3LYP/6-31G(2df,p) level. Table~\ref{tab:qm9_properties} provides detailed descriptions of these properties.
-
-\begin{table}[!htb]
-  \centering
-  \caption{Descriptions of 12 quantum mechanical properties in QM9.}
-  \label{tab:qm9_properties}
-  \scriptsize
-    \begin{tabular}{clcc}
-    \toprule
-    \textbf{Property} & \textbf{Description} & \textbf{Unit} & \textbf{Type} \\
-    \midrule
-    $\alpha$ & Isotropic polarizability & $a_0^3$ & Electronic \\
-    $\Delta\varepsilon$ & HOMO-LUMO gap & meV & Electronic \\
-    $\varepsilon_{HOMO}$ & Highest occupied molecular orbital energy & meV & Electronic \\
-    $\varepsilon_{LUMO}$ & Lowest unoccupied molecular orbital energy & meV & Electronic \\
-    $\mu$ & Dipole moment & D & Electronic \\
-    $C_v$ & Heat capacity at 298.15K & $\frac{cal}{mol \cdot K}$ & Thermodynamic \\
-    $G$ & Free energy at 298.15K & meV & Thermodynamic \\
-    $H$ & Enthalpy at 298.15K & meV & Thermodynamic \\
-    $R^2$ & Electronic spatial extent & $a_0^2$ & Structural \\
-    $U$ & Internal energy at 298.15K & meV & Thermodynamic \\
-    $U_0$ & Internal energy at 0K & meV & Thermodynamic \\
-    ZPVE & Zero point vibrational energy & meV & Vibrational \\
-    \bottomrule
-    \end{tabular}
-\end{table}
-
-\subsection{rMD17 Dataset}
-
-The revised MD17 (rMD17)~\cite{christensen2020role} dataset contains molecular dynamics trajectories for 10 small organic molecules. Each trajectory consists of molecular conformations with corresponding energies and atomic forces computed at the PBE+vdW-TS level of theory. Table~\ref{tab:rmd17_molecules} provides detailed descriptions of these molecules.
-
-\begin{table}[!htb]
-  \centering
-  \caption{Descriptions of 10 molecules in rMD17.}
-  \label{tab:rmd17_molecules}
-  \scriptsize
-    \begin{tabular}{clccc}
-    \toprule
-    \textbf{No.} & \textbf{Molecule} & \textbf{Formula} & \textbf{\#Atoms} & \textbf{\#Conformations} \\
-    \midrule
-    1 & Aspirin & C$_9$H$_8$O$_4$ & 21 & 211,762 \\
-    2 & Azobenzene & C$_{12}$H$_{10}$N$_2$ & 24 & 99,999 \\
-    3 & Benzene & C$_6$H$_6$ & 12 & 627,983 \\
-    4 & Ethanol & C$_2$H$_6$O & 9 & 555,092 \\
-    5 & Malonaldehyde & C$_3$H$_4$O$_2$ & 9 & 993,237 \\
-    6 & Naphthalene & C$_{10}$H$_8$ & 18 & 326,250 \\
-    7 & Paracetamol & C$_8$H$_9$NO$_2$ & 20 & 106,490 \\
-    8 & Salicylic acid & C$_7$H$_6$O$_3$ & 16 & 320,231 \\
-    9 & Toluene & C$_7$H$_8$ & 15 & 442,790 \\
-    10 & Uracil & C$_4$H$_4$N$_2$O$_2$ & 12 & 133,770 \\
-    \bottomrule
-    \end{tabular}
-\end{table}
-
-
-\section{Paired Bootstrap Confidence Intervals}
+\subsection{Paired Bootstrap Confidence Intervals}
 \label{sec:appendix_bootstrap}
 
 To quantify the estimation uncertainty of our single-seed results, we compute paired bootstrap 95\% confidence intervals based on per-sample test predictions (10,831 samples for QM9). For each task-model pair, we resample the test set 10,000 times with replacement and compute the MAE on each resample. Table~\ref{tab:bootstrap_ci} reports the bootstrap CI for representative tasks.
@@ -466,40 +507,28 @@ To quantify the estimation uncertainty of our single-seed results, we compute pa
 The mean relative CI width across all 36 task-model pairs is 7.0\% (median 6.1\%, max 12.5\%), indicating that the single-seed point estimates are reasonably stable. The paired bootstrap tests confirm that several key improvements (Equiformer-$U_0$, SphereNet-ZPVE) are statistically robust even within a single seed ($p < 0.01$), while others (SphereNet-$H$) require multi-seed evaluation for definitive conclusions.
 
 
-\section{Hyperparameter Search Space}
-\label{sec:appendix_hyperparam}
+% ============================================================================
+% APPENDIX F: Attribution of Gains to the Electron Density Signal
+% ============================================================================
+\section{Attribution of Gains to the Electron Density Signal}
+\label{sec:appendix_contribution}
 
-We conduct grid search over the following hyperparameters for EDG++:
+A natural question is whether the observed improvements stem from the ED signal itself, or from generic effects of cross-modal knowledge distillation (additional regularization, auxiliary teacher capacity, multi-modal inductive bias). Our experimental design provides a natural two-level decomposition: Baseline $\to$ EDG isolates the contribution of ED as privileged information, and EDG $\to$ EDG++ isolates the contribution of reliability-aware selective distillation. The first level---attributing the Baseline $\to$ EDG gap to the ED signal---is supported by three lines of converging evidence. We then explain why a ``non-ED teacher'' replacement control would not provide a neutral counterfactual.
 
-\begin{itemize}
-    \item \textbf{Distillation weight} $\lambda \in \{0.01, 0.5, 1.0\}$ for QM9; $\lambda = 0.001$ for rMD17
-    \item \textbf{Local threshold coefficient} $\kappa_{batch} \in \{-1.5, 0, 1.5\}$
-    \item \textbf{Global threshold coefficient} $\kappa_{all} \in \{-1.5, 0, 1.5\}$ for QM9; $\{-1.5, -1, -0.5, 0, 0.5, 1.0, 1.5\}$ for rMD17
-    \item \textbf{Mixing coefficient} $\beta \in \{0, 0.5, 1.0\}$ for QM9; $\beta = 0$ for rMD17
-\end{itemize}
+\textbf{Evidence 1: Improvement hierarchy follows the Hohenberg--Kohn theorem.} The gains are not uniform across property types: thermodynamic properties improve most consistently (5/5 win rate, $+3.7$\% to $+16.3$\%), followed by electronic and then vibrational properties (Section~\ref{sec:Experiments}, Fig.~\ref{fig:property_group}). Under the Hohenberg--Kohn theorem~\cite{hohenberg1964inhomogeneous}, ground-state thermodynamic observables are unique functionals of the electron density, so a teacher that genuinely transfers ED-related information should show exactly this hierarchy. A generic cross-modal teacher with no ED grounding has no a priori reason to favor thermodynamic over vibrational properties.
 
-For each task, we select the hyperparameter configuration that achieves the best validation performance.
+\textbf{Evidence 2: Cross-architecture consistency.} The same teacher and reliability estimator yield gains on four structurally different students (SchNet, Equiformer, SphereNet, ViSNet) and on two task families (QM9 properties, rMD17 energies/forces). If the gains were artifacts of teacher capacity or KD-induced regularization, we would expect them to vary substantially with student inductive bias. Architecture-agnostic improvement is more consistent with a transferred physical signal than with an architecture-specific regularization effect.
+
+\textbf{Evidence 3: Reliability estimator validates the ED-error proxy.} The estimator $\phi_{eval}$ is trained \emph{only} to predict the L2 reconstruction error between teacher-predicted and ImageED-extracted ED features---it never sees task labels. The fact that filtering by this purely-ED-derived score systematically improves downstream task performance (27/36 to 31/36 tasks across architectures, Table~\ref{tab:incremental}) implies that ED reconstruction quality is causally linked to distillation utility. This linkage would not exist if gains were unrelated to ED fidelity.
+
+\textbf{Why a non-ED teacher control is not the right counterfactual.} A natural-seeming ablation would replace the ED-aware teacher with a non-ED teacher of identical architecture. We argue that no such replacement is neutral: (a)~an ImageNet-pretrained backbone has no molecular semantics, so any negative result trivially confirms the obvious; (b)~a structural-image teacher trained with a self-supervised objective such as contrastive pretraining introduces a different representation-learning pretext as a new confound; (c)~a teacher trained with task supervision conflates ``ED vs.~no~ED'' with ``self-supervised vs.~supervised''. Each candidate isolates a different variable, and none isolates ``ED signal'' alone. This is consistent with practice in cross-modal molecular distillation: prior privileged-information and image-modality work for molecular property prediction~\cite{xiang2024iem,zeng2022accurate,sunshine2023chemical} attributes gains to the privileged signal through component, scale, or input-level ablations rather than through teacher replacement; analogously, recent cross-modal denoising-distillation work~\cite{cho2025denoisers} grounds its attribution in the theoretical link between denoising and force-field learning~\cite{zaidi2022pretraining} rather than in a counterfactual teacher swap.
+
+\textbf{Field-standard input-level attribution.} The cross-modal KD literature standardly attributes signal contribution at the \emph{input} level (channel ablation, modality removal, input corruption) rather than at the teacher-replacement level. We note this as the appropriate direction for further attribution analysis: an RGB-vs-D channel ablation on the ImageED teacher input would directly isolate the contribution of the depth (electron-cloud spatial) channel from the RGB (electrostatic potential) channel, with the rest of the pipeline held fixed. We leave a full channel-level ablation to future work, but the three lines of evidence above already constrain the attribution: the Hohenberg--Kohn-aligned hierarchy, the architecture-agnostic transfer, and the ED-error-trained estimator's empirical validity each independently require the gains to be ED-mediated rather than artifacts of generic cross-modal regularization.
 
 
-\section{Implementation Details}
-\label{sec:appendix_implementation}
-
-\subsection{ImageED Pre-training}
-
-The encoder and decoder of ImageED are built based on ViT-Base/16~\cite{dosovitskiy2020image}. The encoder has an embedding dimension of 768 with 12 Transformer layers, and the decoder has an embedding dimension of 512 with 8 Transformer layers. We use a learning rate of 1.5e-4, a batch size of 64, a mask ratio of 0.25, $\lambda_{VR}=1$ and $\lambda_{MR}=1$ for 20 epochs on 8 GeForce RTX 4090 GPUs. The input ED images have shape $6 \times 4 \times 224 \times 224$ (6 views, 4 channels including RGB-D).
-
-\subsection{ED-aware Teacher Pre-training}
-
-We divide 2\% of the 2 million molecules as validation set and the rest as training set. The ED-aware teacher uses ResNet18~\cite{he2016deep} with view-wise average pooling. The ED predictor is a 2-layer MLP with Softplus activation. We use a learning rate of 5e-3 and a batch size of 128 to train for approximately 280k steps.
-
-\subsection{Reliability Estimator Training}
-
-The reliability estimator is a lightweight MLP with architecture: Linear(512, 256) $\rightarrow$ Softplus $\rightarrow$ Linear(256, 1), with approximately 131K parameters. It is jointly trained with the ED-aware teacher and ED predictor in Stage II, sharing the same SGD optimizer (momentum 0.9, learning rate 0.003, weight decay 1e-4, batch size 128, 25 epochs). Note that the evaluator's input features are detached from the teacher's computation graph to prevent gradient interference. The training objective is to predict the L2 reconstruction error between predicted and ground-truth ED features.
-
-\subsection{Downstream Task Training}
-
-For QM9, we use the dataset split from Geom3D~\cite{liu2024symmetry}: 110K for training, 10K for validation, and 11K for testing. For rMD17, we use 950 for training, 50 for validation, and 1000 for testing. The mapper $f_M$ and task predictor $f_T$ each consist of a single linear layer. We select the best checkpoint based on validation MAE for QM9 and validation force MAE for rMD17.
-
+% ============================================================================
+% APPENDIX G: Chignolin OOD Sanity Check
+% ============================================================================
 \section{Chignolin Reliability Distribution (Out-of-Distribution Sanity Check)}
 \label{sec:appendix_chignolin_sanity}
 
@@ -507,7 +536,7 @@ To support the body claim (Sec.~\ref{sec:case_study_chignolin}) that the Chignol
 
 Figure~\ref{fig:chignolin_reliability_hist} shows the resulting histogram. The Chignolin reliability distribution is centered at \textbf{$-0.858 \pm 0.054$} (mean $\pm$ std), shifted by roughly $0.07$--$0.18$ units toward lower reliability than the per-molecule means cited for the 10 rMD17 molecules ($-0.68$ to $-0.79$, std $\approx\!0.055$ each). Critically, \textbf{78\%} of Chignolin conformations still fall within the rMD17 mean $\pm 2\sigma$ window, i.e.\ a sizeable trustable subset coexists with a low-reliability bulk. This is precisely the regime in which (i)~naive distillation EDG is most likely to incur negative transfer on the low-reliability bulk---consistent with the $+\!4.0\%$ energy MAE increase reported in Table~\ref{tab:chignolin_energy_force}---and (ii)~reliability-gated selective distillation EDG++ can route teacher signal away from the unreliable bulk while preserving its benefit on the trustable subset, yielding the net $-\!6.8\%$ improvement.
 
-\begin{figure}[!t]
+\begin{figure}[!htb]
 \centering
 \includegraphics[width=0.85\linewidth]{imgs_edgpp/experiments/chignolin_case_study/appendix_reliability_hist.pdf}
 \caption{Reliability score distribution on a 600-conformation random subsample of the Chignolin training set ($n\!=\!7634$ total). Shaded grey band indicates the rMD17 per-molecule reliability mean range ($-0.79$ to $-0.68$) plus 2$\sigma$ on each side. The Chignolin mean (red dashed line, $-0.86$) sits below the rMD17 range, but a 78\% tail overlaps the rMD17-trustable regime, motivating reliability-gated selective distillation.}
