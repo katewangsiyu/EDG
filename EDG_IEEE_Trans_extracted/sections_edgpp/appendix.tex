@@ -34,7 +34,7 @@ In order to clearly describe the proposed EDG/EDG++ framework, we show the overa
        \STATE \quad\quad\quad\quad\quad\quad\quad $\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}} = f_{EDP}(\mathcal{F}^{\mathcal{S}})$
        \STATE
        \STATE \textbf{// EDG++: Selective Distillation}
-       \STATE Compute confidence: $c_i = -\phi_{eval}(\mathcal{F}^{\mathcal{S},(i)})$
+       \STATE Compute reliability: $c_i = -\phi_{eval}(\mathcal{F}^{\mathcal{S},(i)})$
        \STATE Local threshold: $\tau_{local} = \mu_{\mathcal{B}} + \kappa_{batch} \cdot \sigma_{\mathcal{B}}$ \quad ($\mu_{\mathcal{B}}, \sigma_{\mathcal{B}}$: batch mean/std of $\{c_i\}$)
        \STATE Global threshold: $\tau_{global} = \mu_{all} + \kappa_{all} \cdot \sigma_{all}$ \quad (pre-computed over training set)
        \STATE Hybrid threshold: $\tau = \beta \cdot \tau_{local} + (1-\beta) \cdot \tau_{global}$

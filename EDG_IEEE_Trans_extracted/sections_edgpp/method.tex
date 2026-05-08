@@ -105,23 +105,25 @@ Section~\ref{sec:error_distribution} provides \emph{indirect but supportive} evi
 \subsection{Reliability Estimator}
 \label{sec:Reliability_Estimator}
 
+\noindent\textit{Nomenclature.} Throughout this paper we use \emph{reliability score} (or simply \emph{reliability}) for the scalar $c_i = -\phi_{eval}(\mathcal{F}^{\mathcal{S},(i)})$, with higher values indicating higher estimated reliability of the teacher's per-sample prediction. The term ``confidence'' is reserved for statistical quantities such as bootstrap confidence intervals; ``trust'' and ``fidelity'' appear only in their natural-language sense and do not denote separate quantities.
+
 Following Proposition~\ref{prop:gradient_noise}, we introduce a reliability estimator $\phi_{eval}: \mathbb{R}^{d^S} \rightarrow \mathbb{R}$ as a practical proxy for the per-sample teacher error $\|\varepsilon_i\|$. It is a lightweight 2-layer MLP (Linear(512, 256)$\rightarrow$Softplus$\rightarrow$Linear(256, 1)) jointly trained with the ED-aware teacher in Stage~II. Both its input features and regression target are detached from the teacher's computation graph to prevent gradient interference: without input detachment, the evaluator's gradient could push the teacher toward making errors more \emph{predictable} rather than more \emph{accurate}; without target detachment, $\mathcal{L}_{eval}$ would back-propagate through $\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}}$ and alter the alignment loss landscape. The training objective is:
 \begin{equation}
     \mathcal{L}_{eval} = \mathbb{E}\left[\left|\phi_{eval}\!\bigl(\operatorname{sg}(\mathcal{F}^{\mathcal{S}})\bigr) - \operatorname{sg}\!\bigl(\|\mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}} - \mathcal{F}^{\mathcal{U}}\|_2\bigr)\right|\right]
 \end{equation}
 where $\operatorname{sg}(\cdot)$ denotes stop-gradient (detach).
-At inference, we convert the evaluator output to a confidence score $c_i = -\phi_{eval}(\mathcal{F}^{\mathcal{S},(i)})$, where higher $c_i$ indicates higher estimated reliability. The threshold form $\tau = \mu + \kappa\sigma$ (Section~\ref{sec:Adaptive_Thresholding}) is inherently scale-invariant, ensuring that $\kappa$ controls the retention rate in units of standard deviations regardless of the absolute scale of $c_i$. Although introduced as a training-time gate, the same frozen estimator can be queried at inference to flag per-sample OOD inputs (\eg, MD frames drifting from the training manifold), a capability exploited in the Chignolin case study (Sec.~\ref{sec:case_study_chignolin}).
+At inference, we convert the evaluator output to a reliability score $c_i = -\phi_{eval}(\mathcal{F}^{\mathcal{S},(i)})$, where higher $c_i$ indicates higher estimated reliability. The threshold form $\tau = \mu + \kappa\sigma$ (Section~\ref{sec:Adaptive_Thresholding}) is inherently scale-invariant, ensuring that $\kappa$ controls the retention rate in units of standard deviations regardless of the absolute scale of $c_i$. Although introduced as a training-time gate, the same frozen estimator can be queried at inference to flag per-sample OOD inputs (\eg, MD frames drifting from the training manifold), a capability exploited in the Chignolin case study (Sec.~\ref{sec:case_study_chignolin}).
 
 \subsection{Adaptive Thresholding Mechanism}
 \label{sec:Adaptive_Thresholding}
 
-We implement selective distillation with an adaptive thresholding mechanism combining global (dataset-level) and local (batch-level) statistics. The form $\tau = \mu + \kappa \cdot \sigma$ is \emph{distribution-agnostic}: since $\mu$ and $\sigma$ come from the same confidence score population, a given $\kappa$ yields comparable filtering strictness regardless of the score distribution's scale or shape. No distributional assumption is required; under approximate normality, the retention rate simplifies to $\Phi(-\kappa)$ (Appendix~\ref{sec:appendix_remarks}).
+We implement selective distillation with an adaptive thresholding mechanism combining global (dataset-level) and local (batch-level) statistics. The form $\tau = \mu + \kappa \cdot \sigma$ is \emph{distribution-agnostic}: since $\mu$ and $\sigma$ come from the same reliability score population, a given $\kappa$ yields comparable filtering strictness regardless of the score distribution's scale or shape. No distributional assumption is required; under approximate normality, the retention rate simplifies to $\Phi(-\kappa)$ (Appendix~\ref{sec:appendix_remarks}).
 
 \textbf{Local Threshold.} For each mini-batch $\mathcal{B}$, we compute:
 \begin{equation}
     \tau_{local} = \mu_\mathcal{B} + \kappa_{batch} \cdot \sigma_\mathcal{B}
 \end{equation}
-where $\mu_\mathcal{B}$ and $\sigma_\mathcal{B}$ are the mean and standard deviation of confidence scores within the batch, and $\kappa_{batch}$ controls the strictness of filtering.
+where $\mu_\mathcal{B}$ and $\sigma_\mathcal{B}$ are the mean and standard deviation of reliability scores within the batch, and $\kappa_{batch}$ controls the strictness of filtering.
 
 \textbf{Global Threshold.} We pre-compute statistics over the entire training set:
 \begin{equation}
