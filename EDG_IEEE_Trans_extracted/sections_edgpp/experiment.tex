@@ -122,7 +122,6 @@ Table~\ref{tab:qm9_edgpp} presents the main QM9 results. EDG++ improves 34 out o
 
 Tables~\ref{tab:rmd17_energy} and~\ref{tab:rmd17_force} present the rMD17 results. EDG delivers consistent energy improvements across all architectures (33.7\% for SchNet and 25.2\% for SphereNet on average), while force improvements remain modest (1.5--5.3\%), because forces depend on local atomic interactions rather than the global energy distribution captured by ED. EDG++ provides further gains on top of EDG across all three architectures. Aggregated across the 60 molecule-task combinations (30 energy + 30 force), EDG++ improves over the no-distillation baseline on 55/60 tasks. Hyperparameter configurations are in Appendix~\ref{app:hyper}; a progressive-component ablation isolating the contribution of the reliability estimator and per-molecule error analyses (including a boundary case on malonaldehyde) are in Appendices~\ref{app:progressive}~and~\ref{app:boundary}.
 
-\FloatBarrier
 \subsection{Ablation Studies}
 
 \subsubsection{Selective Distillation Components}
