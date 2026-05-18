@@ -3,7 +3,7 @@
 
 \subsection{Preliminaries}
 
-\textbf{Background.} Electron density (ED) connects molecular geometry to energy and force predictions in molecular force fields (MFF). As the primary output of quantum mechanical calculations, ED provides the theoretical foundation for constructing accurate MFFs. The Hohenberg-Kohn theorem~\cite{hohenberg1964inhomogeneous} states that the ground-state energy is a unique functional of the electron density: $E = E[\rho]$. However, computing $\rho(\mathbf{r})$ requires expensive quantum chemical calculations, making it impractical at inference time. Our framework addresses this by treating ED as \emph{privileged information}---available during training but removed at inference to preserve scalability.
+\textbf{Privileged information setup.} Following the LUPI paradigm~\cite{vapnik2009new,lopez2016unifying}, we treat ED as \emph{privileged information}: it is computed via DFT during training but is not required at inference, eliminating the cost of quantum chemical computation at deployment.
 
 \textbf{Notation and Problem Formulation.} The molecular geometry and the corresponding ground-truth labels with $k$ prediction tasks are $\{\mathcal{G}_i=(\mathcal{V}_i, \mathcal{E}_i)\}_{i=1}^n$ and $\{y_i\}_{i=1}^n\in\mathbb{R}^k$ respectively, where $\mathcal{V}_i\in\mathbb{R}^{n^v_i\times(3+d_i^v)}$ ($n^v_i$, 3, $d_i^v$ are the number of atoms, the coordinates, and the feature dimensions) and $\mathcal{E}_i\in\mathbb{R}^{n^e_i\times d_i^e}$ ($n^e_i$ is the number of edges and $d_i^e$ is the feature dimensions of bonds). The corresponding multi-view ED image and structural image are $\mathcal{U}\in\mathbb{R}^{N_v\times 4\times H\times W}$ and $\mathcal{S}\in\mathbb{R}^{N_s\times 3\times H\times W}$ respectively, where $N_v$ and $N_s$ denote the number of views for ED images ($N_v\!=\!6$) and structural images ($N_s\!=\!4$), and $H$, $W$ are the image height and width. 3 and 4 represent RGB and RGB-D channels, respectively.
 
@@ -32,7 +32,8 @@ This image format produces a fixed-size output tensor regardless of source ED gr
 
 We train ImageED, the ED feature extractor used by the teacher in Section~\ref{sec:Pretraining_of_ED-aware_Teacher}, on the 2M ED images from Section~\ref{sec:Generation_ED_Image}. ImageED follows the ViT-Base/16~\cite{dosovitskiy2020image} masked-autoencoder backbone of EDG~\cite{xiang2025edg}: each multi-view ED image is patchified (patch size 16, $14\times 14$ grid per view, 25\% mask ratio), encoded by an ED encoder $f_{EDE}$ on visible tokens, and decoded by $f_{EDD}$ on the union of encoded and learnable mask tokens, yielding reconstructed unmasked / masked tokens $\hat{t}^u$ / $\hat{t}^m$.
 
-Two complementary objectives capture local and contextual ED structure: \emph{visible reconstruction} on unmasked tokens (renamed from EDG's $\mathcal{L}_{MP}$ to $\mathcal{L}_{VR}$ for alignment with standard MAE terminology and to avoid notation conflict with the new selective-distillation \emph{mask} introduced in Section~\ref{sec:Adaptive_Thresholding}), and \emph{masked reconstruction} on masked tokens (the standard MAE objective~\cite{he2022masked}, renamed to $\mathcal{L}_{MR}$ for symmetry):
+% [Polish] Original: ... visible reconstruction on unmasked tokens (renamed from EDG's $\mathcal{L}_{MP}$ to $\mathcal{L}_{VR}$ for alignment ...
+Two complementary objectives capture local and contextual ED structure: \emph{visible reconstruction} on unmasked tokens (renamed from $\mathcal{L}_{MP}$ in EDG to $\mathcal{L}_{VR}$ for alignment with standard MAE terminology and to avoid notation conflict with the new selective-distillation \emph{mask} introduced in Section~\ref{sec:Adaptive_Thresholding}), and \emph{masked reconstruction} on masked tokens (the standard MAE objective~\cite{he2022masked}, renamed to $\mathcal{L}_{MR}$ for symmetry):
 \begin{align}
 \label{Formula_L_VR}
 \mathcal{L}_{VR}=\frac{1}{B}\sum_{i=1}^B d(t^u_i, \hat{t}^u_i),\quad
@@ -73,7 +74,8 @@ We analyze why selective distillation can outperform naive distillation when tea
 \label{eq:teacher_decomp}
     \mathcal{F}^{\mathcal{S}\rightarrow\mathcal{U}}_i = \mathcal{F}^{\mathcal{U}}_i + \varepsilon_i
 \end{equation}
-where $\mathcal{F}^{\mathcal{U}}_i \in \mathbb{R}^{d^U}$ is the ground-truth ED feature from ImageED and $\varepsilon_i \in \mathbb{R}^{d^U}$ is the teacher's reconstruction error. In cross-modal settings, $\|\varepsilon_i\|$ varies substantially across samples: some molecular geometries are faithfully captured by the multi-view projection, while others (\eg, molecules with delocalized electronic structure or symmetric charge distributions) incur significant information loss.
+% [Polish] Original: where ... incur significant information loss.
+where $\mathcal{F}^{\mathcal{U}}_i \in \mathbb{R}^{d^U}$ is the ground-truth ED feature from ImageED and $\varepsilon_i \in \mathbb{R}^{d^U}$ is the reconstruction error of the teacher. In cross-modal settings, $\|\varepsilon_i\|$ varies substantially across samples: some molecular geometries are faithfully captured by the multi-view projection, while others (\eg, molecules with delocalized electronic structure or symmetric charge distributions) incur substantial information loss.
 
 \textbf{Distillation Gradient Decomposition.} Using the squared L2 loss $\|\cdot\|^2$ for analytical tractability (the qualitative conclusions extend to smooth L1 via local quadratic approximation), the naive distillation gradient for a batch $\mathcal{B}$ decomposes as:
 \begin{equation}
